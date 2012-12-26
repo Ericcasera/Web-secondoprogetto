@@ -1,0 +1,25 @@
+Per il database : Create un database chiamato DBSecondoProgetto :
+	-username : database
+	-password : database
+Per averlo basta che sovrascrivete la cartella che vi passo dentro database/ (non è sincronizzata , lo solo copiata)
+
+Ho iniziato a fare un po il progetto , cmq il grosso lo faremo a gennaio.
+
+Cmq ho intenzione di fare in questo modo
+
+- Le offerte vengono fatte dagli utente , e vengono messe nella tabella users_offers. 
+Il programma fa poi gli auto_incrementi e li inserisci dentro auto_increment_offers (facile) (ad ogni offerta basta prendere le 2 più alta per un prodotto e fare che l'offerta corrente piu alta sia la minore delle due piu l'incremento)
+
+- Le aste vengono inserite sia dentro active , sia dentro ended. Facciamo un thread (o qualcosaltro ) che ogni tot o in certe occasioni controlla il database active e per le offerte scadute , calcola i vari paramentri , manda le mail , e le sposta dentro ended aggiungendo un record dentro sales (se viene venduta correttamente)
+
+- In caso di annullamento il prof vuole delle robe particolari perciò anche se un asta viene annullata rimane nelle active e si setta un flag apposta (cosi nelle varie pagine si puo fare vedere un messaggio speciale). Poi il theard alla scadenza le leva cmq (uguale a sopra).
+
+Per le pagine jsp : Useremo solo jstl che è più semplice e ci basta per tutto quello che facciamo. (ovviamente se proprio dobbiamo aggiungiamo degli script).
+
+Struttureremo le pagine in questo modo
+	\UserPages\
+	\AdminPages\
+	pagine generali / di errore / login
+
+Non sara possibile accedere a nessuna pagina se non tramite le servet (mettero filtro). 
+Usiamo pattern mcv -> request -> servlet -> servlet.set Attribute -> pagina jsp
