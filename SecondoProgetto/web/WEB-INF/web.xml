@@ -72,6 +72,10 @@
         <servlet-name>ProductServlet</servlet-name>
         <servlet-class>Servlets.ProductServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UploadServlet</servlet-name>
+        <servlet-class>Servlets.UploadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LogoutController</url-pattern>
@@ -91,6 +95,10 @@
     <servlet-mapping>
         <servlet-name>ProductServlet</servlet-name>
         <url-pattern>/User/ProductController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadServlet</servlet-name>
+        <url-pattern>/UploadController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

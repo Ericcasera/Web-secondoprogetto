@@ -10,14 +10,22 @@ import java.util.Calendar;
  *
  * @author Daniel
  */
-public class Product {
+public class Auction {
   
-    private int product_id ,seller_id , category_id;
+    private int product_id ,seller_id , category_id , current_offers;
     private float current_price , shipping_price,starting_price , increment_price , min_price;
-    private String name , image_url , description , seller_name;
+    private String name , image_url , description;
     private boolean cancelled;
     private long expiration;
 
+    public int getCurrent_offers() {
+        return current_offers;
+    }
+
+    public void setCurrent_offers(int current_offers) {
+        this.current_offers = current_offers;
+    }
+ 
     public int getCategory_id() {
         return category_id;
     }
@@ -81,15 +89,6 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public String getSeller_name() {
-        return seller_name;
-    }
-
-    public void setSeller_name(String seller_name) {
-        this.seller_name = seller_name;
-    }
-    
 
     public float getCurrent_price() {
         return current_price;

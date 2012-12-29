@@ -43,9 +43,11 @@
                 var emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
                 
                 if (email1.search(emailRegEx) == -1)
-                    { document.getElementById("email1_span").innerHTML = "*Indirizzo email non valido"; return false; }
+                    { document.getElementById("email1_span").innerHTML = "*Indirizzo email non valido"; document.getElementById("email2_span").innerHTML = ""; return false; }
                 else
+                    {
                     document.getElementById("email1_span").innerHTML = ""; 
+                    }
                 if (email1 != email2) 
                     { document.getElementById("email1_span").innerHTML = "*Gli indirizzi devono essere uguali";
                       document.getElementById("email2_span").innerHTML = "*Gli indirizzi devono essere uguali";

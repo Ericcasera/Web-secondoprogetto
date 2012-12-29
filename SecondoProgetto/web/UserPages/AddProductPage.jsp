@@ -16,28 +16,39 @@
         
         <script type="text/javascript">
             function validate(form){
+                
+                var regExpValue = /^\d+[.]?\d{0,2}/;
+                var regExpCheck = /^\d+[.]?\d*$/;
+                
                 var name = form.product_name.value;
-                var starting_price = parseFloat(form.starting_price.value);
-                var increment = parseFloat(form.increment.value);
-                var min_price = parseFloat(form.min_price.value);
-                var shipping_price = parseFloat(form.shipping_price.value);
+                var starting_price = form.starting_price.value;
+                var increment = form.increment.value;
+                var min_price = form.min_price.value;
+                var shipping_price = form.shipping_price.value;
                 var corretto = true;
                 
                 if(name == "" || name == null) {document.getElementById("product_span").innerHTML = "*Obbligatorio"; corretto = false; }
                 else document.getElementById("product_span").innerHTML ="";
                 
-                if(isNaN(starting_price) || starting_price < 0.0) {document.getElementById("starting_price_span").innerHTML = "*Deve essere un numero maggiore di zero"; corretto = false; }
-                else document.getElementById("starting_price_span").innerHTML ="";
+                if(starting_price.search(regExpCheck) == -1) 
+                    {document.getElementById("starting_price_span").innerHTML = "*Il formato non è corretto"; corretto = false;}
+                    else{document.getElementById("starting_price_span").innerHTML = "";     
+                         form.starting_price.value = starting_price.match(regExpValue);}
+                     
+                if(increment.search(regExpCheck) == -1) 
+                    {document.getElementById("increment_span").innerHTML = "*Il formato non è corretto"; corretto = false;}
+                    else{document.getElementById("increment_span").innerHTML = "";
+                        form.increment.value = increment.match(regExpValue);}
                 
-                if(isNaN(increment) || increment < 0.0) {document.getElementById("increment_span").innerHTML = "*Deve essere un numero maggiore di zero"; corretto = false; }
-                else document.getElementById("increment_span").innerHTML ="";
-                
-                if(isNaN(min_price) || min_price < 0.0) {document.getElementById("min_price_span").innerHTML = "*Deve essere un numero maggiore di zero"; corretto = false; }
-                else document.getElementById("min_price_span").innerHTML ="";
-               
-                if(isNaN(shipping_price) || shipping_price < 0.0) {document.getElementById("shipping_price_span").innerHTML = "*Deve essere un numero maggiore di zero"; corretto = false; }
-                else document.getElementById("shipping_price_span").innerHTML ="";
-                            
+                if(min_price.search(regExpCheck) == -1) 
+                    {document.getElementById("increment_span").innerHTML = "*Il formato non è corretto"; corretto = false;}
+                    else{document.getElementById("min_price_span").innerHTML = "";
+                        form.min_price.value = min_price.match(regExpValue);}
+
+                if(shipping_price.search(regExpCheck) == -1) 
+                    {document.getElementById("shipping_price_span").innerHTML = "*Il formato non è corretto"; corretto = false;}
+                    else{document.getElementById("shipping_price_span").innerHTML = "";
+                        form.shipping_price.value = shipping_price.match(regExpValue);}
 
                 return corretto;
             }
@@ -65,7 +76,7 @@
     <body>
         <h1>Inserisci dati prodotto</h1>
         <div id="form_div">
-        <form action="<c:url value="/User/ProductController?op=requestAddProduct"/>" method="post" onsubmit="return validate(this);" class="form-horizontal">
+        <form action="<c:url value="/User/ProductController?op=addAuctionRequest"/>" method="post" onsubmit="return validate(this);" class="form-horizontal">
             <input type="hidden" name="image_name" id="image_name">
                  <div class="control-group">
                         <div class="controls">
@@ -175,7 +186,12 @@
                          <%-- Inizio secondo div --%>
                          
     <div  id="image_div" class="hide">
-        <h4>Seleziona un'immagine <h6>oppure <a href="#">Fai l'upload di una delle tue</a></h6></h4>
+        <h4>Seleziona un'immagine</h4>
+        <h6>Oppure <a href="#">upload</a> una nuova immagine</h6>
+        <form class="form-inline">
+            <input type="file" >
+            <button type="submit">Upload</button>
+        </form>
          <c:forEach items="${requestScope.file_list}" var="file">
              <a href="#" onclick="return changeImage('${file}')">
                  <img src="<c:url value="/Images/${file}"/>" width="150" height="150">

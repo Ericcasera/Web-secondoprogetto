@@ -4,10 +4,14 @@
  */
 package Servlets;
 
+import Beans.Auction;
+import Beans.User;
 import Managers.DBManager;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +25,11 @@ public class UserServlet extends HttpServlet {
 
     private DBManager DBManager;
     private String contextPath;
-    private static String HomepagePattern =  "home";
-    private static String ProductsPattern =  "products";
-    private static String AddProductPattern =  "addProduct";
+    private static String homepagePattern =  "home";
+    private static String searchPattern =  "search";
+    private static String addProductPattern =  "addProduct";
+    private static String auctionDetailsPattern =  "details";
+    
     
     @Override
     public void init() throws ServletException {
@@ -43,13 +49,13 @@ public class UserServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         
-        else if(op.equals(HomepagePattern))
+        else if(op.equals(homepagePattern))
         {  
         request.setAttribute("category_list", category_list);        
         request.getRequestDispatcher("/UserPages/Homepage.jsp").forward(request, response);
         }
         
-        else if(op.equals(AddProductPattern))
+        else if(op.equals(addProductPattern))
         {  
           String path = this.getServletContext().getRealPath("Images/"); 
           File folder = new File(path);
@@ -58,6 +64,60 @@ public class UserServlet extends HttpServlet {
           request.setAttribute("category_list", category_list);
           request.setAttribute("file_list", file_list); 
           request.getRequestDispatcher("/UserPages/AddProductPage.jsp").forward(request, response);
+        }
+        
+        else if(op.equals(searchPattern))
+        {
+            int category_id = Integer.parseInt(request.getParameter("category_id"));
+            String pattern = request.getParameter("search_query");
+        
+            ArrayList result = DBManager.queryAuctionsSearch(category_id, pattern);
+            
+            String json = "[";
+            Iterator iter = result.iterator();
+            while(iter.hasNext())
+            {
+                Auction tmp = (Auction) iter.next();
+            json += "{\"id\":\""+ tmp.getProduct_id() +"\", ";
+            json += "\"name\":\""+ tmp.getName() +"\", ";
+            json += "\"description\":\""+ tmp.getDescription() +"\", ";
+            json += "\"expiration\":\""+ tmp.getTimeToExpiration() +"\", ";
+            json += "\"image_url\":\""+ tmp.getImage_url() +"\", ";
+            json += "\"current_price\":\""+ tmp.getCurrent_price() +"\", ";
+            json += "\"shipping_price\":\""+ tmp.getShipping_price() +"\" }";
+            if(iter.hasNext()) {
+                    json += " , ";
+                }
+            }
+            json += "]";
+            
+            response.setContentType("application/json");
+            response.getWriter().write(json);  
+        }
+        
+        else if(op.equals(auctionDetailsPattern))
+        {       
+            int auction_id = -1;
+            try{
+            auction_id = Integer.parseInt(request.getParameter("id"));
+   
+            }catch(Exception e){
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+        
+            ArrayList result = DBManager.queryAuctionDetails(auction_id);
+        
+            if(result.isEmpty())
+            {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND);
+                return;
+            }
+            
+            request.setAttribute("auction", result.get(0));
+            request.setAttribute("user", result.get(1));      
+            request.getRequestDispatcher("/UserPages/AuctionDetailsPage.jsp").forward(request, response);
+        
         }
     }
 

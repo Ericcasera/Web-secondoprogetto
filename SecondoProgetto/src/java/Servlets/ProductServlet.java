@@ -4,7 +4,7 @@
  */
 package Servlets;
 
-import Beans.Product;
+import Beans.Auction;
 import Beans.User;
 import Managers.DBManager;
 import java.io.IOException;
@@ -24,10 +24,10 @@ public class ProductServlet extends HttpServlet {
 
     private DBManager DBManager;
     private String contextPath;
-    private static String RequestAddProductPattern =  "requestAddProduct";
-    private static String ConfirmAddProductPattern =  "confirmAddProduct";
-    private static String RequestOfferPattern =  "requestOffer";
-    private static String ConfirmOfferPattern =  "confirmOffer";
+    private static String addAcutionRequestPattern =  "addAuctionRequest";
+    private static String addAcutionConfirmPattern =  "addAuctionConfirm";
+    private static String offerRequestPattern =  "requestOffer";
+    private static String offerConfirmPattern =  "confirmOffer";
     
     @Override
     public void init() throws ServletException {
@@ -47,9 +47,9 @@ public class ProductServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         
-        else if(op.equals(RequestAddProductPattern))
+        else if(op.equals(addAcutionRequestPattern))
         {  
-        Product tmp = new Product();
+        Auction tmp = new Auction();
             try{
             tmp.setDescription(request.getParameter("description"));
             tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment")));
@@ -78,14 +78,14 @@ public class ProductServlet extends HttpServlet {
             return;
             }
             request.setAttribute("category_list", category_list);
-            request.setAttribute("product", tmp);
+            request.setAttribute("auction", tmp);
             request.getRequestDispatcher("/UserPages/AddProductConfirmPage.jsp").forward(request, response);
             
         }
                 
-        else if(op.equals(ConfirmAddProductPattern))
+        else if(op.equals(addAcutionConfirmPattern))
         {
-        Product tmp = new Product();
+        Auction tmp = new Auction();
             try{
             tmp.setDescription(request.getParameter("description"));
             tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment_price")));
@@ -103,7 +103,7 @@ public class ProductServlet extends HttpServlet {
             return;
             }
             
-            boolean result = DBManager.addNewProduct(tmp);
+            boolean result = DBManager.addNewAuction(tmp);
             if(result == false) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             }
