@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <welcome-file-list>
+        <welcome-file>General/GeneralController</welcome-file>
+    </welcome-file-list>
     <filter>
         <filter-name>AdminFilter</filter-name>
         <filter-class>Filters.AdminFilter</filter-class>
@@ -9,24 +12,21 @@
         <filter-class>Filters.UserFilter</filter-class>
     </filter>
     <filter>
-        <filter-name>LoginFilter</filter-name>
-        <filter-class>Filters.LoginFilter</filter-class>
+        <filter-name>GuestFilter</filter-name>
+        <filter-class>Filters.GuestFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>JspFilter</filter-name>
+        <filter-class>Filters.JspFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/index.jsp </url-pattern>
+        <filter-name>JspFilter</filter-name>
+        <url-pattern>/Jsp/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
+        <filter-name>GuestFilter</filter-name>
         <url-pattern>/GuestController </url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/RecoverPasswordPage.jsp</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/SubscriptionPage.jsp</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>UserFilter</filter-name>
@@ -57,31 +57,27 @@
         </param-value>
     </context-param>
     <servlet>
-        <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>Servlets.LoginServlet</servlet-class>
+        <servlet-name>GuestServlet</servlet-name>
+        <servlet-class>Servlets.GuestServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AdminServlet</servlet-name>
         <servlet-class>Servlets.AdminServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>GeneralServlet</servlet-name>
+        <servlet-class>Servlets.GeneralServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>UserServlet</servlet-name>
         <servlet-class>Servlets.UserServlet</servlet-class>
     </servlet>
-    <servlet>
-        <servlet-name>ProductServlet</servlet-name>
-        <servlet-class>Servlets.ProductServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>UploadServlet</servlet-name>
-        <servlet-class>Servlets.UploadServlet</servlet-class>
-    </servlet>
     <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
+        <servlet-name>GuestServlet</servlet-name>
         <url-pattern>/LogoutController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>LoginServlet</servlet-name>
+        <servlet-name>GuestServlet</servlet-name>
         <url-pattern>/GuestController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
@@ -89,16 +85,12 @@
         <url-pattern>/Admin/AdminController</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>GeneralServlet</servlet-name>
+        <url-pattern>/General/GeneralController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/User/UserController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ProductServlet</servlet-name>
-        <url-pattern>/User/ProductController</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>UploadServlet</servlet-name>
-        <url-pattern>/UploadController</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

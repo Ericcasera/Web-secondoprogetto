@@ -22,6 +22,8 @@ import javax.servlet.http.HttpSession;
  */
 public class AdminFilter implements Filter {
     
+    private String contextPath;
+    
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         
@@ -32,9 +34,7 @@ public class AdminFilter implements Filter {
         
         if(session == null || session.getAttribute("user") == null)
         {
-           req.setAttribute("redirectURL","/index.jsp");
-           req.setAttribute("redirectMSG", "Login Page");
-           req.getRequestDispatcher("/ErrorPage.jsp").forward(request, response);
+           res.sendRedirect(contextPath + "/GuestController?op=loginRequest");
         }
         else
         {
@@ -45,8 +45,8 @@ public class AdminFilter implements Filter {
             }
             else if(role == 2)
             {  
-             req.setAttribute("redirectURL","/User/UserController?op=home");
-             req.setAttribute("redirectMSG", "User Homepage");
+             req.setAttribute("redirectURL","/General/GeneralController?op=home");
+             req.setAttribute("redirectMSG", "Homepage");
              req.getRequestDispatcher("/ErrorPage.jsp").forward(request, response);   
             }
             else
@@ -64,5 +64,6 @@ public class AdminFilter implements Filter {
    
     @Override
     public void init(FilterConfig filterConfig) {
+        contextPath = filterConfig.getServletContext().getContextPath();
     }
 }

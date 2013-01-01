@@ -10,7 +10,7 @@ package Beans;
  */
 public class User {
     
-    private String username , password , email , city , country , address , phone;
+    private String username = null, password , email , city , country , address , phone;
     private int role , id;
 
     public String getEmail() {

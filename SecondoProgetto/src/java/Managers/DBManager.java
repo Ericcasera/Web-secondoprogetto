@@ -340,28 +340,24 @@ public class DBManager {
                  }
             }
      }
-     
-    public ArrayList queryAuctionsSearch(int category_id , String pattern){
-        
+    
+     public int countAuction(int category_id , String pattern ) 
+    {
             String query;
             PreparedStatement stm = null ;
             ResultSet rs = null;
-            ArrayList lista = new ArrayList(40);
-            Auction tmp;
             
             if(category_id == -1)
             {
-            query = "Select id , current_price , image_url , shipping_price , end_date , product_name , description"
+            query = "Select count(*) as records "
                     + " from active_auctions "
-                    + " where (product_name like ? OR description like ?) and end_date > ?"
-                    + "order by product_name"; 
+                    + " where (product_name like ? OR description like ?) and end_date > ? "; 
             }
             else
             {
-            query = "Select id , current_price , image_url , shipping_price , end_date , product_name , description"
+            query = "Select count(*) as records "
                     + " from active_auctions "
-                    + " where (product_name like ? OR description like ?) and end_date > ? and category_id = ?"
-                    + "order by product_name";
+                    + " where (product_name like ? OR description like ?) and end_date > ? and category_id = ? ";
             }
               
             try {     
@@ -376,6 +372,74 @@ public class DBManager {
             stm.setInt(4, category_id);
             }
             
+            rs = stm.executeQuery();
+            
+            rs.next();
+            
+            return rs.getInt("records");
+ 
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{          
+                   stm.close(); rs.close();  
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+            
+            return 0;
+      
+    } 
+     
+    public ArrayList queryAuctionsSearch(int category_id , String pattern , int order , int offset , int per_page){
+        
+            String query;
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            ArrayList lista = new ArrayList(40);
+            Auction tmp;
+            
+            String order_by = " order by ";
+            
+            switch (order)
+            {
+                case 1: order_by  += "product_name";  break; //1 = product_name  
+                case 2: order_by  += "current_price"; break; //2 = current_price  
+                case 3: order_by  += "end_date";      break; //3 = end_date  
+            }
+            
+            order_by += " OFFSET " + offset + " ROWS FETCH FIRST "+ per_page +" ROWS ONLY";
+            
+            if(category_id == -1)
+            {
+            query = "Select id , current_price , image_url , shipping_price , end_date , product_name , description "
+                    + " from active_auctions "
+                    + " where (product_name like ? OR description like ?) and end_date > ? "
+                    + order_by;
+            }
+            else
+            {
+            query = "Select id , current_price , image_url , shipping_price , end_date , product_name , description"
+                    + " from active_auctions "
+                    + " where (product_name like ? OR description like ?) and end_date > ? and category_id = ? "
+                    + order_by;
+            }
+              
+            try {     
+            stm = con.prepareStatement(query);
+            String match_pattern = "%" + pattern + "%";
+            stm.setString(1, match_pattern);
+            stm.setString(2, match_pattern);
+            stm.setTimestamp(3, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+            
+            if(category_id != -1)
+            {
+            stm.setInt(4, category_id);
+            }
+
             rs = stm.executeQuery();
             while(rs.next())
                 {
@@ -410,18 +474,26 @@ public class DBManager {
         
             PreparedStatement stm = null ;
             PreparedStatement stm2 = null;
+            PreparedStatement stm3 = null;
             ResultSet rs = null;
             ResultSet rs2 = null;
+            ResultSet rs3 = null;
             Auction tmp_auction;
             User tmp_user;
             ArrayList list = new ArrayList(10);
+            float max_price = 0;
+            
 
             String query = "Select a.ID as id , a.CATEGORY_ID as category_id , a.PRICE_INCREMENT as price_increment , a.CURRENT_PRICE as current_price , "
                     + " a.IMAGE_URL as image_url , a.SHIPPING_PRICE as shipping_price , a.END_DATE as end_date , a.PRODUCT_NAME as product_name , "
                     + " a.DESCRIPTION as description , a.CANCELLED as cancelled , u.USERNAME as username , u.EMAIL as email "
                     + " from active_auctions a join users u on u.id = a.seller_id "
                     + " where a.ID = ? and a.end_date > ? ";
-            String query2 = "Select count(*) as offers from auto_increment_offers where product_id = ?";
+            
+            String query2 = "Select count(*) as offers  , max(price) as max_price from auto_increment_offers where product_id = ?";
+            
+            String query3 = "Select username , u.id as id from auto_increment_offers a join users u on a.user_id = u.id "
+                    + " where price = ? and product_id = ? ";
               
             try {     
             stm = con.prepareStatement(query);
@@ -452,17 +524,33 @@ public class DBManager {
                     
                     tmp_user.setUsername(rs.getString("username"));
                     tmp_user.setEmail(rs.getString("email"));
-                    
+                     
                     if(rs2.next())
                     {
                     tmp_auction.setCurrent_offers(rs2.getInt("offers"));
+                    max_price = rs2.getFloat("max_price");
                     }
                     list.add(tmp_auction);
                     list.add(tmp_user);
                 }
             rs.close(); 
-            rs2.close();       
+            rs2.close(); 
             
+            stm3 = con.prepareStatement(query3);
+            
+            stm3.setInt(2, auction_id);
+            stm3.setFloat(1, max_price);
+            
+            rs3 = stm3.executeQuery();
+            tmp_user = new User();
+            
+            if(rs3.next())
+            {
+            tmp_user.setUsername(rs3.getString("username")); 
+            tmp_user.setId(rs3.getInt("id"));
+            }            
+            
+            list.add(tmp_user);
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
         }
@@ -476,7 +564,202 @@ public class DBManager {
             }
             
             return list;
-    }     
+    } 
+    
+    public synchronized boolean addNewOffer(int auction_id , float offer , int user_id , float increment , float base_price)
+        {
+            if(!checkAuctionDate(auction_id))
+            {
+            return false;
+            }
+            
+            String insertQuery = "Insert into users_offers (product_id , user_id , max_price , offer_date)"
+                    + "values (? , ? , ? , ?)";
+            String checkQuery  = "Select current_price from active_auctions where id = ?";
+            PreparedStatement insertStm = null ;
+            PreparedStatement checkStm = null ;
+            ResultSet rs;
+            
+            
+            try {     
+                
+            checkStm  = con.prepareStatement(checkQuery);
+            insertStm = con.prepareStatement(insertQuery); 
+            
+            checkStm.setInt(1, auction_id);
+            rs = checkStm.executeQuery();
+            float max_price = -1;
+            
+            if(rs.next()){
+                max_price =  rs.getFloat("current_price");       
+            }
+            
+            rs.close();
+            
+            if(offer <= max_price){
+                return false;
+            }
+    
+            insertStm.setInt(1, auction_id);
+            insertStm.setInt(2, user_id);
+            insertStm.setFloat(3, offer);     
+            insertStm.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+
+            int result = insertStm.executeUpdate();
+
+            if(result == 0) {
+                    return false;
+                }
+            
+            updateOffers(auction_id , increment , base_price);
+            
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+            return false;
+        }
+        finally {
+                try{     
+                   insertStm.close(); checkStm.close();  
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                     return false;
+                 }
+            }
+            
+        return true;
+     }
+    
+     private synchronized void updateOffers(int auction_id , float increment , float base_price){
+         
+            String checkQuery = "Select user_id , max_price from users_offers where product_id = ? order by max_price desc";
+            
+            String insertQuery = "Insert into auto_increment_offers (product_id , user_id , price , offer_date)"
+                    + "values (? , ? , ? , ?)";
+  
+            String insertQuery2 = "Update active_auctions set current_price = ? where id = ? ";
+            
+            PreparedStatement insertStm = null ;
+            PreparedStatement checkStm = null ;
+            PreparedStatement insertStm2 = null ;
+            ResultSet rs;
+            
+             try {     
+                
+            checkStm  = con.prepareStatement(checkQuery);
+            insertStm = con.prepareStatement(insertQuery);
+            insertStm2 = con.prepareStatement(insertQuery2);
+            
+            checkStm.setInt(1, auction_id);
+            rs = checkStm.executeQuery();
+            
+            float first = -1;
+            float second = -1;
+            float sum = -1;
+            int first_id = -1 , second_id = -1;
+            
+            
+            rs.next();
+            
+            first = rs.getFloat("max_price");
+            first_id = rs.getInt("user_id");
+            
+            if(rs.next()){
+            second = rs.getFloat("max_price");
+            second_id = rs.getInt("user_id");
+            }
+            
+            rs.close();
+            
+            if(second == -1)
+            {
+            sum = base_price + increment;
+            insertStm.setInt(1, auction_id);
+            insertStm.setInt(2, first_id);
+            insertStm.setFloat(3, sum);     
+            insertStm.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));  
+            insertStm.executeUpdate();
+            }
+            else
+            {
+                sum = second + increment;
+                
+                if(second == first)
+                {
+                sum = first;
+                }
+                
+                insertStm.setInt(1, auction_id);
+                
+                if(sum != first)
+                {
+            insertStm.setInt(2, second_id);
+            insertStm.setFloat(3, second);     
+            insertStm.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));     
+            
+            insertStm.executeUpdate();
+                }
+            
+            insertStm.setInt(2, first_id);
+            insertStm.setFloat(3, sum);
+            insertStm.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));  
+            
+            insertStm.executeUpdate(); 
+            }
+  
+            insertStm2.setFloat(1, sum);
+            insertStm2.setInt(2, auction_id);
+            
+            insertStm2.executeUpdate();
+                    
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{     
+                   insertStm.close(); checkStm.close(); insertStm2.close(); 
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            } 
+  
+    
+     }
+     
+    public boolean checkAuctionDate(int auction_id){
+    
+            String query = "Select id from active_auctions where id = ? and end_date > ? ";
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            
+            try {     
+            stm = con.prepareStatement(query);
+            stm.setInt(1, auction_id);
+            stm.setTimestamp(2, new Timestamp(Calendar.getInstance().getTimeInMillis()));  
+            
+            rs = stm.executeQuery();
+            
+            if(rs.next())
+                {
+                   return true;
+                }
+            rs.close(); 
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{          
+                   stm.close();   
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+            
+        return false;
+    } 
     
     
     

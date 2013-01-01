@@ -16,45 +16,29 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-        
-    
 /**
  *
  * @author Daniel
  */
-public class UserFilter implements Filter {
+public class GuestFilter implements Filter {
     
-    private String contextPath; 
+    private String contextPath;
     
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         
         HttpServletRequest  req = (HttpServletRequest) request;
         HttpServletResponse  res = (HttpServletResponse) response;
-      
+        
         HttpSession session = req.getSession(false);
         
         if(session == null || session.getAttribute("user") == null)
         {
-            res.sendRedirect(contextPath + "/GuestController?op=loginRequest");
+           chain.doFilter(request, response);
         }
         else
         {
-            int role = ((User) session.getAttribute("user")).getRole();
-            if(role == 2)
-            {
-             chain.doFilter(request, response);
-            }
-            else if(role == 1)
-            {  
-             req.setAttribute("redirectURL","/General/GeneralController?op=home");
-             req.setAttribute("redirectMSG", "Homepage");
-             req.getRequestDispatcher("/ErrorPage.jsp").forward(request, response);   
-            }
-            else
-            {
-            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
+           res.sendRedirect(contextPath + "/General/GeneralController?op=home");    
         }
     }
         

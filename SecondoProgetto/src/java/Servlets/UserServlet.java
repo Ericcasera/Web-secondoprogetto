@@ -9,9 +9,8 @@ import Beans.User;
 import Managers.DBManager;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Calendar;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -24,17 +23,16 @@ import javax.servlet.http.HttpServletResponse;
 public class UserServlet extends HttpServlet {
 
     private DBManager DBManager;
-    private String contextPath;
-    private static String homepagePattern =  "home";
-    private static String searchPattern =  "search";
-    private static String addProductPattern =  "addProduct";
-    private static String auctionDetailsPattern =  "details";
-    
+    private static String addAcutionRequestPattern =  "AucRequest";
+    private static String addAcutionConfirmPattern =  "AucConfirm";
+    private static String offerPattern =  "offer";
+    private static String addAuctionPageRequestPattern = "addAuction";
+    private static String accountLogPattern = "log";
+    private static String accountAcvitePattern = "active";
     
     @Override
     public void init() throws ServletException {
-            DBManager = (DBManager)super.getServletContext().getAttribute("DbManager");
-            contextPath = this.getServletContext().getContextPath();          
+            DBManager = (DBManager)super.getServletContext().getAttribute("DbManager");        
         }   
     
     
@@ -45,79 +43,119 @@ public class UserServlet extends HttpServlet {
         ArrayList category_list = DBManager.queryCategoryList();
         
         if(op == null) {
-        
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         
-        else if(op.equals(homepagePattern))
-        {  
-        request.setAttribute("category_list", category_list);        
-        request.getRequestDispatcher("/UserPages/Homepage.jsp").forward(request, response);
-        }
-        
-        else if(op.equals(addProductPattern))
-        {  
-          String path = this.getServletContext().getRealPath("Images/"); 
-          File folder = new File(path);
-          String[] file_list = folder.list();
-          
-          request.setAttribute("category_list", category_list);
-          request.setAttribute("file_list", file_list); 
-          request.getRequestDispatcher("/UserPages/AddProductPage.jsp").forward(request, response);
-        }
-        
-        else if(op.equals(searchPattern))
+        else if(op.equals(offerPattern))           
         {
-            int category_id = Integer.parseInt(request.getParameter("category_id"));
-            String pattern = request.getParameter("search_query");
+        int prod_id = -1;
+        float offer = 0;
+        float increment = 0;
+        float base_price = 0;
         
-            ArrayList result = DBManager.queryAuctionsSearch(category_id, pattern);
+        try{
+        prod_id = Integer.parseInt(request.getParameter("id"));
+        offer = Float.parseFloat(request.getParameter("offer"));
+        increment = Float.parseFloat(request.getParameter("increment"));
+        base_price = Float.parseFloat(request.getParameter("base_price"));
+        }catch(Exception ex){
             
-            String json = "[";
-            Iterator iter = result.iterator();
-            while(iter.hasNext())
-            {
-                Auction tmp = (Auction) iter.next();
-            json += "{\"id\":\""+ tmp.getProduct_id() +"\", ";
-            json += "\"name\":\""+ tmp.getName() +"\", ";
-            json += "\"description\":\""+ tmp.getDescription() +"\", ";
-            json += "\"expiration\":\""+ tmp.getTimeToExpiration() +"\", ";
-            json += "\"image_url\":\""+ tmp.getImage_url() +"\", ";
-            json += "\"current_price\":\""+ tmp.getCurrent_price() +"\", ";
-            json += "\"shipping_price\":\""+ tmp.getShipping_price() +"\" }";
-            if(iter.hasNext()) {
-                    json += " , ";
-                }
-            }
-            json += "]";
-            
-            response.setContentType("application/json");
-            response.getWriter().write(json);  
+         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+         return;
+         
         }
         
-        else if(op.equals(auctionDetailsPattern))
-        {       
-            int auction_id = -1;
-            try{
-            auction_id = Integer.parseInt(request.getParameter("id"));
-   
-            }catch(Exception e){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                return;
+        if(DBManager.addNewOffer(prod_id, offer, ((User)request.getSession().getAttribute("user")).getId(), increment , base_price))
+            {
+            request.setAttribute("message", "La tua offerta è stata aggiunta con successo.");
+            request.setAttribute("type", 1);
+            request.getRequestDispatcher("/General/GeneralController?op=details&id=" + prod_id).forward(request, response);
+            }
+            else
+            {
+            request.setAttribute("message", "Non è stato possibile inserire la tua offerta.");
+            request.setAttribute("type", -1);
+            request.getRequestDispatcher("/General/GeneralController?op=details&id=" + prod_id).forward(request, response);  
             }
         
-            ArrayList result = DBManager.queryAuctionDetails(auction_id);
+        }
         
-            if(result.isEmpty())
-            {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
+        else if(op.equals(addAuctionPageRequestPattern))
+        {
+        String path = this.getServletContext().getRealPath("Images/"); 
+        File folder = new File(path);
+        String[] file_list = folder.list();
+        
+        request.setAttribute("category_list", category_list);
+        request.setAttribute("file_list", file_list);  
+            
+        request.getRequestDispatcher("/Jsp/UserPages/AddProductPage.jsp").forward(request, response);
+        }
+        
+        else if(op.equals(addAcutionRequestPattern))
+        {  
+        Auction tmp = new Auction();
+            try{
+            tmp.setDescription(request.getParameter("description"));
+            tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment")));
+            tmp.setMin_price(Float.parseFloat(request.getParameter("min_price")));
+            tmp.setName(request.getParameter("product_name"));
+            tmp.setSeller_id(((User)request.getSession().getAttribute("user")).getId());
+            tmp.setShipping_price(Float.parseFloat(request.getParameter("shipping_price")));
+            tmp.setStarting_price(Float.parseFloat(request.getParameter("starting_price")));
+            tmp.setCategory_id(Integer.parseInt(request.getParameter("category")));
+            
+            String image = request.getParameter("image_name");
+            if(image == null || image.equals(""))
+                {
+                    image = "no_image.jpg";
+                }
+            tmp.setImage_url(image);
+            
+            Calendar expiration = Calendar.getInstance();
+            expiration.add(Calendar.DAY_OF_YEAR, Integer.parseInt(request.getParameter("day")));
+            expiration.add(Calendar.HOUR, Integer.parseInt(request.getParameter("hour")));
+            expiration.add(Calendar.MINUTE, Integer.parseInt(request.getParameter("min")));
+            expiration.add(Calendar.SECOND, Integer.parseInt(request.getParameter("sec")));
+            tmp.setExpiration(expiration.getTimeInMillis());       
+            }catch(Exception ex){
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+            }
+            request.setAttribute("category_list", category_list);
+            request.setAttribute("auction", tmp);
+            request.getRequestDispatcher("/Jsp/UserPages/AddProductConfirmPage.jsp").forward(request, response);
+            
+        }
+                
+        else if(op.equals(addAcutionConfirmPattern))
+        {
+        Auction tmp = new Auction();
+            try{
+            tmp.setDescription(request.getParameter("description"));
+            tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment_price")));
+            tmp.setMin_price(Float.parseFloat(request.getParameter("min_price")));
+            tmp.setName(request.getParameter("name"));
+            tmp.setSeller_id(Integer.parseInt(request.getParameter("seller_id"))); 
+            tmp.setShipping_price(Float.parseFloat(request.getParameter("shipping_price")));
+            tmp.setStarting_price(Float.parseFloat(request.getParameter("starting_price"))); 
+            tmp.setImage_url(request.getParameter("image_name"));
+            tmp.setExpiration(Long.parseLong(request.getParameter("expiration")));
+            tmp.setCategory_id(Integer.parseInt(request.getParameter("category")));
+            
+            }catch(Exception ex){
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
             }
             
-            request.setAttribute("auction", result.get(0));
-            request.setAttribute("user", result.get(1));      
-            request.getRequestDispatcher("/UserPages/AuctionDetailsPage.jsp").forward(request, response);
-        
+            boolean result = DBManager.addNewAuction(tmp);
+            if(result == false) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            }
+            else {
+                request.getRequestDispatcher("/Jsp/GeneralPages/Homepage.jsp").forward(request, response);
+            }
+            
         }
     }
 
