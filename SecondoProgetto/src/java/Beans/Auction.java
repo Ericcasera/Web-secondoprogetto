@@ -12,12 +12,29 @@ import java.util.Calendar;
  */
 public class Auction {
   
-    private int product_id ,seller_id , category_id , current_offers;
-    private float current_price , shipping_price,starting_price , increment_price , min_price;
+    private int auction_id , category_id , current_offers ;
+    private float current_price , shipping_price, starting_price , increment_price , min_price;
     private String name , image_url , description;
     private boolean cancelled;
     private long expiration;
+    private User seller = null , buyer = null;
 
+    public User getSeller() {
+        return seller;
+    }
+
+    public void setSeller(User seller) {
+        this.seller = seller;
+    }
+
+    public User getBuyer() {
+        return buyer;
+    }
+
+    public void setBuyer(User buyer) {
+        this.buyer = buyer;
+    }
+    
     public int getCurrent_offers() {
         return current_offers;
     }
@@ -34,22 +51,14 @@ public class Auction {
         this.category_id = category_id;
     }
 
-    public int getProduct_id() {
-        return product_id;
+    public int getAuction_id() {
+        return auction_id;
     }
 
-    public void setProduct_id(int product_id) {
-        this.product_id = product_id;
+    public void setAuction_id(int auction_id) {
+        this.auction_id = auction_id;
     }
-
-    public int getSeller_id() {
-        return seller_id;
-    }
-
-    public void setSeller_id(int seller_id) {
-        this.seller_id = seller_id;
-    }
-
+    
     public float getStarting_price() {
         return starting_price;
     }

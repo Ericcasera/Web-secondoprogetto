@@ -16,7 +16,7 @@
                function countdown() {
                    ss = ss-1;
                    if (ss==0) {
-                       window.location = "<c:url value="${requestScope.redirectURL}"/>";
+                       window.location = "<c:url value="${requestScope.URL}"/>";
                }
                    else {
                        document.getElementById("countdown").innerHTML=ss;
@@ -29,8 +29,8 @@
     </head>
     <body onload="countdown()">
         <center>
-        <h1>Non sei autorizzato ad accedere a questa pagina</h1>
-        <h3 >Sarai reindirizzato a breve alla <a href="<c:url value="${requestScope.redirectURL}"/>"><c:out value="${requestScope.redirectMSG}"/></a>(<span id="countdown">5</span>)</h3>
+        <h3><c:out value="${requestScope.MSG}" default="Non sei autorizzato ad accedere a questa pagina"/></h3>
+        <h5 >Sarai reindirizzato a breve alla <a href="<c:url value="${requestScope.URL}"/>"><c:out value="${requestScope.Page}"/></a>(<span id="countdown">5</span>)</h5>
         </center>
     </body>
     </html>

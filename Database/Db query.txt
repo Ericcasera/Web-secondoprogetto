@@ -1,0 +1,107 @@
+create table users
+(
+user_id INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+username varchar(255) unique not null ,
+password varchar(255) not null ,
+role int not null,
+email varchar(255) not null , 
+country varchar(255) not null,
+city varchar(255) not null,
+address varchar(255) not null,
+phone varchar(255) ,
+creation_date timestamp not null ,
+check (role == 1 or role == 2) , 
+);
+
+create table category
+(
+category_id INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+category_name varchar(255) unique not null ,
+category_description varchar(1000)
+);
+
+
+create table active_auctions
+(
+auction_ID INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+seller_id int not null ,
+category_id int not null ,
+starting_price real not null , 
+price_increment real not null , 
+current_price real not null ,
+min_price real not null default 0.0, 
+shipping_price real not null ,
+image_url varchar(255) not null,
+auction_name varchar(255) not null,
+description varchar(1000) ,
+start_date timestamp not null,
+end_date timestamp not null,
+cancelled boolean not null default false,
+check (price_increment >= 0 and starting_price >= 0 and current_price >= 0 and min_price >= 0 and shipping_price >= 0) ,
+check (start_date < end_date) 
+foreign key (seller_id) references users(user_id),
+foreign key (category_id) references category(category_id)  
+);
+
+create table ended_auctions
+(
+auction_ID INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+seller_id int not null ,
+category_id int not null ,
+starting_price real not null , 
+price_increment real not null , 
+min_price real not null default 0.0, 
+shipping_price real not null ,
+image_url varchar(255) not null,
+auction_name varchar(255) not null,
+description varchar(1000) ,
+start_date timestamp not null,
+end_date timestamp not null,
+cancelled boolean not null default false,
+sold boolean not null default false,
+retreat boolean not null default false,
+retreat_commissions real default 0.0,
+check (price_increment >= 0 and starting_price >= 0 and min_price >= 0 and shipping_price >= 0) ,
+check (start_date < end_date) 
+foreign key (seller_id) references users(user_id),
+foreign key (category_id) references category(category_id)  
+);
+
+create table sales
+(
+sale_ID INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+auction_id int not null ,
+buyer_id int not null ,
+seller_id int not null,
+price real not null , 
+commissions real not null default 0.0 ,
+sale_date timestamp not null,
+check (price >= 0 and commissions >= 0) , 
+foreign key (auction_id) references ended_auctions(auction_ID) ,
+foreign key (seller_id) references users(user_ID),
+foreign key (buyer_id) references users(user_ID)  
+);
+
+create table users_offers 
+(
+offer_ID INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+auction_id int not null ,
+user_id int not null ,
+max_price real not null ,
+offer_date timestamp not null,
+check (max_price >= 0) , 
+foreign key (auction_id) references ended_auctions(auction_id) ,
+foreign key (user_id) references users(user_id)  
+);
+
+create table auto_increment_offers 
+(
+auto_offer_ID INTEGER primary key NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),
+auction_id int not null ,
+user_id int not null ,
+price real not null ,
+offer_date timestamp not null,
+check (price > 0) , 
+foreign key (product_id) references ended_auctions(auction_id) ,
+foreign key (user_id) references users(user_id)  
+);

@@ -9,7 +9,6 @@ import Beans.User;
 import Managers.DBManager;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -25,59 +24,86 @@ public class UserServlet extends HttpServlet {
     private DBManager DBManager;
     private static String addAcutionRequestPattern =  "AucRequest";
     private static String addAcutionConfirmPattern =  "AucConfirm";
-    private static String offerPattern =  "offer";
+    private static String offerRequestPattern =  "offreq";
+    private static String offerConfirmPattern =  "offcon";
     private static String addAuctionPageRequestPattern = "addAuction";
-    private static String accountLogPattern = "log";
-    private static String accountAcvitePattern = "active";
     
     @Override
     public void init() throws ServletException {
             DBManager = (DBManager)super.getServletContext().getAttribute("DbManager");        
         }   
     
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       
-        String op = request.getParameter("op");
-        ArrayList category_list = DBManager.queryCategoryList();
+        String op = request.getParameter("op");   
+        request.setAttribute("category_list", DBManager.queryCategoryList()); 
         
         if(op == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
         }
         
-        else if(op.equals(offerPattern))           
+        else if(op.equals(offerRequestPattern))           
         {
-        int prod_id = -1;
-        float offer = 0;
-        float increment = 0;
-        float base_price = 0;
+
+        int user_id , prod_id;
         
         try{
-        prod_id = Integer.parseInt(request.getParameter("id"));
-        offer = Float.parseFloat(request.getParameter("offer"));
-        increment = Float.parseFloat(request.getParameter("increment"));
-        base_price = Float.parseFloat(request.getParameter("base_price"));
-        }catch(Exception ex){
             
+        user_id = Integer.parseInt(request.getParameter("buyer_id"));
+        prod_id = Integer.parseInt(request.getParameter("id"));
+        
+        }catch(Exception ex){  
          response.sendError(HttpServletResponse.SC_BAD_REQUEST);
          return;
-         
         }
         
+        if(user_id == ((User)request.getSession().getAttribute("user")).getId())
+        {        
+            String message = "Sei già in testa, non puoi fare altre offerte!";
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id + "&message=" + message + "&type=-1");
+            return;
+        }
+
+        request.setAttribute("prod_id", request.getParameter("id"));
+        request.setAttribute("offer", request.getParameter("offer"));
+        request.setAttribute("increment", request.getParameter("increment"));
+        request.setAttribute("base_price", request.getParameter("base_price"));    
+        request.getRequestDispatcher("/Jsp/UserPages/OfferConfirmPage.jsp").forward(request, response);
+
+        }
+        else if(op.equals(offerConfirmPattern))
+        {
+        
+        int prod_id;
+        float increment , offer , base_price;
+        
+        try{
+
+        prod_id =     Integer.parseInt(request.getParameter("id"));
+        increment =   Float.parseFloat(request.getParameter("increment"));
+        offer =       Float.parseFloat(request.getParameter("offer"));
+        base_price =  Float.parseFloat(request.getParameter("base_price"));
+        
+        if(!"offReq".equals(request.getParameter("prec_op")))
+        {
+        response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id);
+        }   
+        }catch(Exception ex){  
+         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+         return;
+        }     
+         
         if(DBManager.addNewOffer(prod_id, offer, ((User)request.getSession().getAttribute("user")).getId(), increment , base_price))
             {
-            request.setAttribute("message", "La tua offerta è stata aggiunta con successo.");
-            request.setAttribute("type", 1);
-            request.getRequestDispatcher("/General/GeneralController?op=details&id=" + prod_id).forward(request, response);
+            String message = "La tua offerta e' stata aggiunta con successo";
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id + "&message=" + message + "&type=1");
             }
             else
             {
-            request.setAttribute("message", "Non è stato possibile inserire la tua offerta.");
-            request.setAttribute("type", -1);
-            request.getRequestDispatcher("/General/GeneralController?op=details&id=" + prod_id).forward(request, response);  
+            String message = "Non è stato possibile aggiungere la tua offerta";
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id + "&message=" + message + "&type=-1");  
             }
-        
         }
         
         else if(op.equals(addAuctionPageRequestPattern))
@@ -86,9 +112,7 @@ public class UserServlet extends HttpServlet {
         File folder = new File(path);
         String[] file_list = folder.list();
         
-        request.setAttribute("category_list", category_list);
-        request.setAttribute("file_list", file_list);  
-            
+        request.setAttribute("file_list", file_list);           
         request.getRequestDispatcher("/Jsp/UserPages/AddProductPage.jsp").forward(request, response);
         }
         
@@ -100,7 +124,9 @@ public class UserServlet extends HttpServlet {
             tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment")));
             tmp.setMin_price(Float.parseFloat(request.getParameter("min_price")));
             tmp.setName(request.getParameter("product_name"));
-            tmp.setSeller_id(((User)request.getSession().getAttribute("user")).getId());
+            User x = new User();
+            x.setId(((User)request.getSession().getAttribute("user")).getId());
+            tmp.setSeller(x);
             tmp.setShipping_price(Float.parseFloat(request.getParameter("shipping_price")));
             tmp.setStarting_price(Float.parseFloat(request.getParameter("starting_price")));
             tmp.setCategory_id(Integer.parseInt(request.getParameter("category")));
@@ -122,7 +148,7 @@ public class UserServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
             }
-            request.setAttribute("category_list", category_list);
+            
             request.setAttribute("auction", tmp);
             request.getRequestDispatcher("/Jsp/UserPages/AddProductConfirmPage.jsp").forward(request, response);
             
@@ -136,7 +162,9 @@ public class UserServlet extends HttpServlet {
             tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment_price")));
             tmp.setMin_price(Float.parseFloat(request.getParameter("min_price")));
             tmp.setName(request.getParameter("name"));
-            tmp.setSeller_id(Integer.parseInt(request.getParameter("seller_id"))); 
+            User x = new User();
+            x.setId(Integer.parseInt(request.getParameter("seller_id")));
+            tmp.setSeller(x);
             tmp.setShipping_price(Float.parseFloat(request.getParameter("shipping_price")));
             tmp.setStarting_price(Float.parseFloat(request.getParameter("starting_price"))); 
             tmp.setImage_url(request.getParameter("image_name"));
@@ -148,12 +176,12 @@ public class UserServlet extends HttpServlet {
             return;
             }
             
-            boolean result = DBManager.addNewAuction(tmp);
-            if(result == false) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            if(DBManager.addNewAuction(tmp)) {
+                //pagina di aggiunta con messaggio successo
+                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
             }
             else {
-                request.getRequestDispatcher("/Jsp/GeneralPages/Homepage.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
             }
             
         }

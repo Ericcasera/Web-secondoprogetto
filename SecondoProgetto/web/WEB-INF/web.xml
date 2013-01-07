@@ -72,6 +72,14 @@
         <servlet-name>UserServlet</servlet-name>
         <servlet-class>Servlets.UserServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AccountServlet</servlet-name>
+        <servlet-class>Servlets.AccountServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UploadServlet</servlet-name>
+        <servlet-class>Servlets.UploadServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>GuestServlet</servlet-name>
         <url-pattern>/LogoutController</url-pattern>
@@ -91,6 +99,14 @@
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/User/UserController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AccountServlet</servlet-name>
+        <url-pattern>/User/AccController</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UploadServlet</servlet-name>
+        <url-pattern>/User/Upload</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

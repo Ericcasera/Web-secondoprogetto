@@ -36,7 +36,7 @@ public class UserFilter implements Filter {
         
         if(session == null || session.getAttribute("user") == null)
         {
-            res.sendRedirect(contextPath + "/GuestController?op=loginRequest");
+            res.sendRedirect(contextPath + "/GuestController?op=loginReq");
         }
         else
         {
@@ -47,9 +47,9 @@ public class UserFilter implements Filter {
             }
             else if(role == 1)
             {  
-             req.setAttribute("redirectURL","/General/GeneralController?op=home");
-             req.setAttribute("redirectMSG", "Homepage");
-             req.getRequestDispatcher("/ErrorPage.jsp").forward(request, response);   
+             req.setAttribute("URL","/General/GeneralController?op=home");
+             req.setAttribute("Page", "Homepage");
+             req.getRequestDispatcher("/Jsp/ErrorPage.jsp").forward(request, response);  
             }
             else
             {

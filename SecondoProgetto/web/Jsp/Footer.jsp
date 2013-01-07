@@ -1,9 +1,7 @@
 
-                            </div>
-                        </center>
-                    </div>  
-                </div> 
-            </div>
+                </div>     
+            </div>                        
         </div>
-    </body>
+    </div>
+</body>
 </html>

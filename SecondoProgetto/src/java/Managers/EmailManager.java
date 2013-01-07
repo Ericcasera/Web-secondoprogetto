@@ -4,7 +4,15 @@
  */
 package Managers;
 
+import Beans.Auction;
+import Beans.User;
+
 public class EmailManager {
+    
+    
+    public void sendEmail(User user , Auction auction){
+    
+    }
     
 
     

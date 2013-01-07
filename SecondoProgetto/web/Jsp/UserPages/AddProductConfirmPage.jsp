@@ -15,7 +15,7 @@
         <c:set value="${requestScope.auction}" var="auction"/>
         
        <c:out value="Nome : ${auction.name}"/><br>
-       <c:out value="Seller id : ${auction.seller_id}"/><br>
+       <c:out value="Seller id : ${auction.seller.id}"/><br>
        <c:out value="Prezzo partenza: ${auction.starting_price}"/><br>
        <c:out value="Incremento : ${auction.increment_price}"/><br>
        <c:out value="Prezzo minimo: ${auction.min_price}"/><br>
@@ -40,7 +40,7 @@
            <input type="hidden" value="${auction.min_price}" name="min_price">
            <input type="hidden" value="${auction.increment_price}" name="increment_price">
            <input type="hidden" value="${auction.starting_price}" name="starting_price">
-           <input type="hidden" value="${auction.seller_id}" name="seller_id">
+           <input type="hidden" value="${auction.seller.id}" name="seller_id">
            <input type="hidden" value="${auction.category_id}" name="category">
            <button type="submit" >Conferma inserzione</button>
        </form>

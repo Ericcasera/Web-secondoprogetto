@@ -100,7 +100,7 @@
                   <div class="control-group">
                       <label class="control-label" for="description">*Descrizione</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Descrizione" type="text" name="description">
+                             <textarea name="description" class="span5" rows="4"></textarea>
                              <br><span class="text-info">Potrai cambiere la descrizione in qualsiasi momento</span>
                          </div>
                   </div>

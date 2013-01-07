@@ -21,13 +21,13 @@ public class GuestServlet extends HttpServlet {
     
     private DBManager DBManager;
     private String contextPath;
-    private static String loginConfirmPattern =  "loginConfirm";
-    private static String loginRequestPattern =  "loginRequest";
+    private static String loginConfirmPattern =  "loginCon";
+    private static String loginRequestPattern =  "loginReq";
     private static String logoutPattern = "logout";    
-    private static String passwordRequestPattern = "pswRequest";
-    private static String passwordConfirmPattern = "pswConfirm";
-    private static String subscriptionRequestPattern = "subRequest";   
-    private static String subscriptionConfirmPattern = "subConfirm";
+    private static String passwordRequestPattern = "pswReq";
+    private static String passwordConfirmPattern = "pswCon";
+    private static String subscriptionRequestPattern = "subReq";   
+    private static String subscriptionConfirmPattern = "subCon";
     
     @Override
     public void init() throws ServletException {
@@ -59,15 +59,13 @@ public class GuestServlet extends HttpServlet {
                 tmp = DBManager.Autentication(username, password);
                 //Caso autenticazione fallita
                 if(tmp == null) {
-                    request.setAttribute("message", "Username o password errati");
-                    request.setAttribute("type", -1);
-                    request.getRequestDispatcher("/Jsp/GuestPages/LoginPage.jsp").forward(request, response);
+                    String message = "Username o password errati";
+                    response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=-1");   
                 }    
                 else
                 {   //Login accettato , creo la session
                     HttpSession session = request.getSession(true);
-                    session.setAttribute("user", tmp);
-                    
+                    session.setAttribute("user", tmp);   
                     response.sendRedirect(contextPath + "/General/GeneralController?op=home");   
                 }
         }        
