@@ -56,25 +56,6 @@ public class GeneralServlet extends HttpServlet {
             ArrayList result = DBManager.queryAuctionsSearch(category_id, pattern , order , (page*per_page) , per_page);
             int  records = DBManager.countAuction(category_id, pattern);
 
-            /*String json = "[{\"elem\" : \""+ records + "\"},";
-            
-            Iterator iter = result.iterator();      
-            while(iter.hasNext())
-            {
-                Auction tmp = (Auction) iter.next();
-            json += "{\"id\":\""+ tmp.getAuction_id() +"\", ";
-            json += "\"name\":\""+ tmp.getName() +"\", ";
-            json += "\"description\":\""+ tmp.getDescription() +"\", ";
-            json += "\"expiration\":\""+ tmp.getTimeToExpiration() +"\", ";
-            json += "\"image_url\":\""+ tmp.getImage_url() +"\", ";
-            json += "\"current_price\":\""+ tmp.getCurrent_price() +"\", ";
-            json += "\"shipping_price\":\""+ tmp.getShipping_price() +"\"},";
-            }
-            
-            json = json.replaceAll(",$", "]");
-
-            response.setContentType("application/json");
-            response.getWriter().write(json);*/
             request.setAttribute("page", page);
             request.setAttribute("category_id", category_id);
             request.setAttribute("pattern", pattern);

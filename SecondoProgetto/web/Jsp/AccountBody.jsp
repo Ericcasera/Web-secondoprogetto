@@ -1,9 +1,11 @@
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="container-fluid" >
         <div class="row-fluid">
             <div class="span2">
                 <ul class="nav nav-list" id="menu">
                 <li class="nav-header">Il mio account</li>
-                <li class="active"><a href="#account">I miei dati</a></li>
+                <li ><a href="<c:url value="/User/AccController?op=account#account"/>">I miei dati</a></li>
                 <li class="divider"></li>
                 <li class="nav-header">Ordini attivi</li>
                 <li><a href="#buy_active">I miei acquisti</a></li>

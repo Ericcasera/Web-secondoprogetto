@@ -27,12 +27,11 @@ public class UploadServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, InterruptedException {
      
-        String dirName = request.getServletContext().getRealPath("/TMP");
-
+        String dirName = request.getServletContext().getRealPath("/Images");
         try {
-            MultipartRequest multi = new MultipartRequest(request, dirName, 10*1024*1024, "ISO-8859-1", new DefaultFileRenamePolicy());
+            MultipartRequest multi = new MultipartRequest(request, dirName, 1024*1024*1024, "ISO-8859-1", new DefaultFileRenamePolicy());
             Enumeration files = multi.getFileNames();
-            
+        
             if(files.hasMoreElements()) 
             {
                 String name = (String)files.nextElement();
@@ -46,7 +45,7 @@ public class UploadServlet extends HttpServlet {
             }
             else
             {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST); 
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST); 
             }    
 }catch(Exception e){
     response.sendError(HttpServletResponse.SC_BAD_REQUEST);

@@ -43,6 +43,25 @@ public class AccountServlet extends HttpServlet {
         {
         request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response);
         }
+                    /*String json = "[{\"elem\" : \""+ records + "\"},";
+            
+            Iterator iter = result.iterator();      
+            while(iter.hasNext())
+            {
+                Auction tmp = (Auction) iter.next();
+            json += "{\"id\":\""+ tmp.getAuction_id() +"\", ";
+            json += "\"name\":\""+ tmp.getName() +"\", ";
+            json += "\"description\":\""+ tmp.getDescription() +"\", ";
+            json += "\"expiration\":\""+ tmp.getTimeToExpiration() +"\", ";
+            json += "\"image_url\":\""+ tmp.getImage_url() +"\", ";
+            json += "\"current_price\":\""+ tmp.getCurrent_price() +"\", ";
+            json += "\"shipping_price\":\""+ tmp.getShipping_price() +"\"},";
+            }
+            
+            json = json.replaceAll(",$", "]");
+
+            response.setContentType("application/json");
+            response.getWriter().write(json);*/
 
     }
 

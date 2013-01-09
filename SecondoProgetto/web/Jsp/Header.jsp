@@ -65,7 +65,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <li><a href="<c:url value="/User/UserController?op=addAuction"/>">Crea nuova asta</a></li>
-                                            <li><a href="<c:url value="/User/AccController?op=account"/>">Il mio account</a></li>
+                                            <li><a href="<c:url value="/User/AccController?op=account#account"/>">Il mio account</a></li>
                                             <li><a href="#">Something else here</a></li>
                                             <li class="divider"></li>
                                             <li><a href="<c:url value="/LogoutController?op=logout"/>">Logout</a></li>              

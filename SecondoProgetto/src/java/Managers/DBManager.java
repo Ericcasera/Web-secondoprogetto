@@ -28,7 +28,8 @@ public class DBManager {
     
     private transient Connection con;
     private ServletContext context;
-    
+ 
+    // <editor-fold defaultstate="collapsed" desc="DbManager methods. Click on the + sign on the left to edit the code.">    
     public DBManager(String dburl , String driver , ServletContext context){
                 try {
                     
@@ -90,39 +91,7 @@ public class DBManager {
      
      }
     
-    private boolean checkAccoutAvailability(User tmp){
-            String query = "Select * from users where username = ?";
-            
-            PreparedStatement stm = null ;
-            ResultSet rs = null;
-            
-            try {     
-            stm = con.prepareStatement(query);
-            stm.setString(1, tmp.getUsername());
-            rs = stm.executeQuery();
-            if(rs.next())
-                {
-                    return false;
-                }       
-        } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
-        }
-        finally {
-                try{     
-                   stm.close();   
-                 }
-                 catch (Exception ex) {
-                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
-                 }
-            }  
-        return true;
-    }
-    
     public boolean newAccountSubscription(User tmp){
-        
-            if(!this.checkAccoutAvailability(tmp)) {
-            return false;
-        }
         
             String query = "Insert into users (username , password , role , email , country , city , address , phone , creation_date)" 
                     + "values ( ? , ? , ? , ? , ? , ? , ? , ? , ?) ";
@@ -258,21 +227,6 @@ public class DBManager {
             
             stm.close();
             
-            query = "Select max(auction_id) as auction_id from active_auctions where seller_id = ? ";
-            
-            stm = con.prepareStatement(query);
-            stm.setInt(1, auction.getSeller().getId());
-            
-            rs = stm.executeQuery();
-            
-            rs.next();
-            
-            auction.setAuction_id(rs.getInt("auction_id"));
-            
-            rs.close();
-            
-            copyAuction(auction);
-            
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
             return false;
@@ -290,51 +244,6 @@ public class DBManager {
         return true;
      }
      
-    private int copyAuction(Auction auction){
-            String query = "Insert into ended_auctions (auction_id , seller_id , category_id , starting_price , price_increment ,"
-                    + "min_price , image_url , shipping_price , start_date , end_date , auction_name , description) values"
-                    + "(? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ?)";
-            PreparedStatement stm = null ;
-            
-            try {     
-            stm = con.prepareStatement(query);
-            stm.setInt(1, auction.getAuction_id());
-            stm.setInt(2, auction.getSeller().getId());
-            stm.setInt(3, auction.getCategory_id());
-            
-            stm.setFloat(4, auction.getStarting_price());
-            stm.setFloat(5, auction.getIncrement_price());
-            stm.setFloat(6, auction.getMin_price());
-            stm.setFloat(8, auction.getShipping_price());
-            
-            stm.setString(7, auction.getImage_url());
-            stm.setString(11, auction.getName());
-            stm.setString(12, auction.getDescription());
-            
-            
-            stm.setTimestamp(9, new Timestamp(Calendar.getInstance().getTimeInMillis()));
-            stm.setTimestamp(10, new Timestamp(auction.getExpiration()));
-
-
-            int result = stm.executeUpdate();
-
-            return result;
-            
-        } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
-            return 0;
-        }
-        finally {
-                try{     
-                   stm.close();   
-                 }
-                 catch (Exception ex) {
-                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
-                     return 0;
-                 }
-            }
-     }
-    
     public int countAuction(int category_id , String pattern ){
             String query;
             PreparedStatement stm = null ;
@@ -998,8 +907,52 @@ public class DBManager {
             
             return list;
     }
+    // </editor-fold>  
     
-    
-    
+    public ArrayList queryUserActiveSells(int user_id){
+        
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            Auction tmp;
+            ArrayList list = new ArrayList(20);
+
+            String query = "Select * from active_auctions where seller_id = ?";
+              
+            try {     
+            stm = con.prepareStatement(query);
+            
+            stm.setInt(1, user_id);
+            
+            rs = stm.executeQuery();
+            
+            while(rs.next())
+                {
+                    tmp = new Auction();
+                    tmp.setAuction_id(rs.getInt("auction_id"));
+                    tmp.setCurrent_price(rs.getFloat("current_price"));
+                    tmp.setImage_url(rs.getString("image_url"));
+                    tmp.setShipping_price(rs.getFloat("shipping_price"));
+                    tmp.setExpiration(rs.getTimestamp("end_date").getTime());
+                    tmp.setMin_price(rs.getFloat("min_price"));            
+                    tmp.setName(rs.getString("auction_name"));
+                    tmp.setDescription(rs.getString("description"));
+                    list.add(tmp);
+                }
+            rs.close(); 
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{          
+                   stm.close();  
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+            
+            return list;
+    }
     
 }

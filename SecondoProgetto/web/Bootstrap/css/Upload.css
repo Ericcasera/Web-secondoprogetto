@@ -1,0 +1,26 @@
+/* 
+    Document   : Upload
+    Created on : 8-gen-2013, 14.06.31
+    Author     : Daniel
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+ .fileinput-button {
+  position: relative;
+  overflow: hidden;
+  float: left;
+  margin-right: 4px;
+}
+ .fileinput-button input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  opacity: 0;
+  filter: alpha(opacity=0);
+  transform: translate(-300px, 0) scale(4);
+  font-size: 23px;
+  direction: ltr;
+  cursor: pointer;
+}

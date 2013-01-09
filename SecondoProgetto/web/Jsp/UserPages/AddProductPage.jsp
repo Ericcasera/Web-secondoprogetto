@@ -3,18 +3,14 @@
     Created on : 24-dic-2012, 19.31.05
     Author     : Daniel
 --%>
-<%@page import="java.io.File"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <link href="<c:url value="/Bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-        <script src="<c:url value="/Bootstrap/js/jquery-1.8.2.js"/>"></script>
-        <script src="<c:url value="/Bootstrap/js/bootstrap.min.js"/>"></script>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        
-        <script type="text/javascript">
+
+<jsp:include page="/Jsp/Header.jsp" flush="false"/>
+
+<link rel="stylesheet" href="<c:url value="/Bootstrap/css/Upload.css"/>">
+<link  href="<c:url value="/Bootstrap/css/grafica.css"/>" rel="stylesheet">
+<script src="<c:url value="/Bootstrap/js/Upload.js"/>"></script>   
+<script type="text/javascript">
             function validate(form){
                 
                 var regExpValue = /^\d+[.]?\d{0,2}/;
@@ -31,25 +27,29 @@
                 else document.getElementById("product_span").innerHTML ="";
                 
                 if(starting_price.search(regExpCheck) == -1) 
-                    {document.getElementById("starting_price_span").innerHTML = "*Il formato non √® corretto"; corretto = false;}
+                    {document.getElementById("starting_price_span").innerHTML = "*Il formato non Ë corretto"; corretto = false;}
                     else{document.getElementById("starting_price_span").innerHTML = "";     
                          form.starting_price.value = starting_price.match(regExpValue);}
                      
                 if(increment.search(regExpCheck) == -1) 
-                    {document.getElementById("increment_span").innerHTML = "*Il formato non √® corretto"; corretto = false;}
+                    {document.getElementById("increment_span").innerHTML = "*Il formato non Ë corretto"; corretto = false;}
                     else{document.getElementById("increment_span").innerHTML = "";
                         form.increment.value = increment.match(regExpValue);}
                 
                 if(min_price.search(regExpCheck) == -1) 
-                    {document.getElementById("increment_span").innerHTML = "*Il formato non √® corretto"; corretto = false;}
+                    {document.getElementById("increment_span").innerHTML = "*Il formato non Ë corretto"; corretto = false;}
                     else{document.getElementById("min_price_span").innerHTML = "";
                         form.min_price.value = min_price.match(regExpValue);}
 
                 if(shipping_price.search(regExpCheck) == -1) 
-                    {document.getElementById("shipping_price_span").innerHTML = "*Il formato non √® corretto"; corretto = false;}
+                    {document.getElementById("shipping_price_span").innerHTML = "*Il formato non Ë corretto"; corretto = false;}
                     else{document.getElementById("shipping_price_span").innerHTML = "";
                         form.shipping_price.value = shipping_price.match(regExpValue);}
-
+                if(corretto)
+                    document.getElementById("final_span").innerHTML = "";
+                else
+                    document.getElementById("final_span").innerHTML = "*Ci sono degli errori nel form";
+                
                 return corretto;
             }
                 $(function() {
@@ -67,16 +67,21 @@
                              $( "#form_div" ).show();
                          });
                          return false };
-        </script>
-        
-        
-        
+</script>
+<script>
+            $(document).ready(function(){
+                $(this).Uploader({
+                    url : "<c:url value="/User/Upload"/>"
+                });
+            });
+</script>
         <title>Nuovo prodotto</title>
     </head>
-    <body>
-        <h1>Inserisci dati prodotto</h1>
-        <div id="form_div">
-        <form action="<c:url value="/User/UserController?op=AucRequest"/>" method="post" onsubmit="return validate(this);" class="form-horizontal">
+    
+<jsp:include page="/Jsp/Body.jsp" flush="false"/>
+            <div id="form_div">
+        <h3 style="text-align: center">Inserisci dati prodotto</h3>
+        <form action="<c:url value="/User/UserController?op=AucRequest&prec_op=newAuc"/>" method="post" onsubmit="return validate(this);" class="form-horizontal">
             <input type="hidden" name="image_name" id="image_name">
                  <div class="control-group">
                         <div class="controls">
@@ -149,7 +154,7 @@
                                 <span class="add-on">$</span> 
                              </div>  
                              <span class="text-error" id="min_price_span"></span>
-                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non √® stato raggiunto , l'asta verr√† annullata</span>
+                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non Ë stato raggiunto , l'asta verr‡ annullata</span>
                          </div>
                   </div>  
                   <div class="control-group">
@@ -160,7 +165,7 @@
                                     <span class="add-on">$</span> 
                                 </div>
                              <span class="text-error" id="shipping_price_span"></span>
-                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non √® stato raggiunto , l'asta verr√† annullata</span>
+                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non Ë stato raggiunto , l'asta verr‡ annullata</span>
                          </div>
                   </div> 
                  <div class="control-group">
@@ -176,22 +181,44 @@
                 
                   <div class="control-group">
                          <div class="controls">
-                             <button class="btn" type="submit">Invia richiesta</button>
+                             <button class="btn btn-primary" type="submit">Invia richiesta</button>
                              <a class="btn" href="<c:url value="/User/UserController?op=home"/>">Annulla</a>
+                             <span class="text-error" id="final_span"></span>
                          </div>
                   </div>                  
             </form>
         </div>
-                         
                          <%-- Inizio secondo div --%>
                          
     <div  id="image_div" class="hide">
-        <h4>Seleziona un'immagine</h4>
-        <h6>Oppure <a href="#">upload</a> una nuova immagine</h6>
-        <form class="form-inline">
-            <input type="file" >
-            <button type="submit">Upload</button>
-        </form>
+    <h4>Fai l'upload delle tue immagini</h4>  
+        <div class="container pull-left">
+            <span id="btn" class="btn btn-success fileinput-button">
+                    <i class="icon-plus icon-white"></i>
+                    <span id="toni">Aggiungi file</span>
+                    <input id="input_file" type="file" name="files" multiple>
+                </span>
+                <button id="upload_all" class="btn btn-primary">Upload all </button>
+                <button id="remove_all" class="btn btn-warning">Remove all </button>
+        </div>
+
+        <div class="container span14">
+        <table class="table" id="upload_table">
+            <thead>
+                <tr>
+                    <th class="span5"></th>
+                    <th class="span2"></th>
+                    <th class="span2"></th>
+                    <th class="span3"></th>
+                    <th class="span1"></th>
+                    <th class="span1"></th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>    
+        </table>
+        </div>
+    <br><br>
          <c:forEach items="${requestScope.file_list}" var="file">
              <a href="#" onclick="return changeImage('${file}')">
                  <img src="<c:url value="/Images/${file}"/>" width="150" height="150">
@@ -199,12 +226,5 @@
          </c:forEach> 
          
     </div>
-                         
-                         
-                         
-           </body>
-         </html>
-                         
-                         
-    </body>
-</html>
+                         <br><br><br><br>                         
+<jsp:include page="/Jsp/Footer.jsp" flush="false"/>
