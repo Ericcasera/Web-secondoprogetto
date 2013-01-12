@@ -1,16 +1,15 @@
-Per il database : Create un database chiamato DBSecondoProgetto :
-	-username : database
-	-password : database
-Per averlo basta che sovrascrivete la cartella che vi passo dentro database/ (non è sincronizzata , lo solo copiata)
+PER LOTTO - 
+- per il mail manager guardati DBcheker per capire che mail mi servono , cmq serve
 
-Ho fatto la ricerca stra figa :è in background , con ordinamento e paginazione. Manca solo l'estetica (non piu di tanto)
-La ricarca è la pagina header.jsp e footer.jsp : per ogni pagina jsp dove semplicemente (come la homepage) importare le due pagine e scrivere il codice html dentro facendo conto di essere già nel div centrale della pagina (quello che viene sovrascritto quando si fa una ricerca).
+- un metodo per mandare la mail del recupero password (ti passo la password , e lo username e la mail)
 
-cmq il sito sara strutturato
+-uno per mandare la mail al seller e ai buyer di annullamento asta (in input ti do la lista dei buyer e il seller , e il beans auction)
 
-delle pagine a cui possono accedere tutti (stile sito vero) , queste pagine sono dinamiche dato che fanno venire le opzioni in base alla sessione : se non sei loggato vedi e basta , se sei come user puoi ad esempio fare offerte , se sei admin puoi cancellare.
-Per il momento sono in versione gamma (ovvero manca tutta estetica) pero le funzionalità ci sono.
-L'unica cosa è che devo ancora fare l'import sulle varie pagine dell'header e del footer
+- uno per inviare la mail di vendita al seller e ai buyer (ti passo il buyer , il seller , il  il beans sale (che contiene anche un oggetto auction)
 
-delle pagine a cui possono accedere quelli con loggati (login , subscription)...
-delle pagine specifiche per l'utente e l'admin
+- uno per inviare la mail di ritiro dell'asta al seller
+
+ricorda che devi fare la versione sia di gmail (fatti un account ti merda) , sia la versione di unitn (teoricamente su quello non serve loggarsi... proveremo la prossima settimana)
+
+
+per quanto riguarda l'excel basta che fai un metodo , dentro l'admin servlet , che preso in input una lista di auction ti compili l'excel con tutti i dati.
