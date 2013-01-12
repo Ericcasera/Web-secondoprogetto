@@ -151,7 +151,7 @@ public class Auction {
     public String getExpirationDate(){
         Calendar result = Calendar.getInstance();
         result.setTimeInMillis(expiration);
-        return "il giorno " + result.get(Calendar.DAY_OF_MONTH) + "/" + result.get(Calendar.MONTH) + "/" +result.get(Calendar.YEAR) + " alle ore " + result.get(Calendar.HOUR_OF_DAY) + ":" + result.get(Calendar.MINUTE) + ":" + result.get(Calendar.SECOND);
+        return result.get(Calendar.DAY_OF_MONTH) + "/" + result.get(Calendar.MONTH) + "/" +result.get(Calendar.YEAR) + " alle ore " + result.get(Calendar.HOUR_OF_DAY) + ":" + result.get(Calendar.MINUTE) + ":" + result.get(Calendar.SECOND);
         
     }
     

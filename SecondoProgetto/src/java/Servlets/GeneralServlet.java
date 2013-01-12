@@ -8,7 +8,6 @@ import Beans.Auction;
 import Managers.DBManager;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -39,10 +38,8 @@ public class GeneralServlet extends HttpServlet {
         request.setAttribute("category_list", DBManager.queryCategoryList()); 
         
         if(op == null || op.equals(homepagePattern)) {     
- 
             request.setAttribute("auctions_list" , DBManager.queryAuctionsSearch(-1, "" , 3 , 0 , 10)); //Primi 10 elementi ordinati per data
-            request.getRequestDispatcher("/Jsp/GeneralPages/Homepage.jsp").forward(request, response);
-            
+            request.getRequestDispatcher("/Jsp/GeneralPages/Homepage.jsp").forward(request, response);          
         }
               
         else if(op.equals(searchPattern))
@@ -56,11 +53,6 @@ public class GeneralServlet extends HttpServlet {
             ArrayList result = DBManager.queryAuctionsSearch(category_id, pattern , order , (page*per_page) , per_page);
             int  records = DBManager.countAuction(category_id, pattern);
 
-            request.setAttribute("page", page);
-            request.setAttribute("category_id", category_id);
-            request.setAttribute("pattern", pattern);
-            request.setAttribute("per_page", per_page);
-            request.setAttribute("order", order);
             request.setAttribute("result", records);
             request.setAttribute("auctions_list", result);
             request.getRequestDispatcher("/Jsp/GeneralPages/SearchPage.jsp").forward(request, response);           
@@ -118,6 +110,12 @@ public class GeneralServlet extends HttpServlet {
             request.getRequestDispatcher("/Jsp/GeneralPages/OffersLogPage.jsp").forward(request, response);
         
         }
+        else
+        {
+            request.setAttribute("auctions_list" , DBManager.queryAuctionsSearch(-1, "" , 3 , 0 , 10)); //Primi 10 elementi ordinati per data
+            request.getRequestDispatcher("/Jsp/GeneralPages/Homepage.jsp").forward(request, response);  
+        }
+              
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

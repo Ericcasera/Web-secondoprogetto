@@ -45,10 +45,9 @@ public class UserServlet extends HttpServlet {
         
         else if(op.equals(offerRequestPattern))           
         {
-
-        int user_id , prod_id;
+        int user_id , prod_id;      
         
-        try{
+        try{   
             
         user_id = Integer.parseInt(request.getParameter("buyer_id"));
         prod_id = Integer.parseInt(request.getParameter("id"));
@@ -64,11 +63,7 @@ public class UserServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id + "&message=" + message + "&type=-1");
             return;
         }
-
-        request.setAttribute("prod_id", request.getParameter("id"));
-        request.setAttribute("offer", request.getParameter("offer"));
-        request.setAttribute("increment", request.getParameter("increment"));
-        request.setAttribute("base_price", request.getParameter("base_price"));    
+ 
         request.getRequestDispatcher("/Jsp/UserPages/OfferConfirmPage.jsp").forward(request, response);
 
         }
@@ -177,11 +172,12 @@ public class UserServlet extends HttpServlet {
             }
             
             if(DBManager.addNewAuction(tmp)) {
-                //pagina di aggiunta con messaggio successo
-                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
+                String message = "La tua asta e' stata aggiunta con successo";
+                response.sendRedirect(request.getContextPath() + "/User/AccController?op=sells&message="+message+"&type=0");
             }
             else {
-                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
+                String message = "Non è stato possibile aggiungere la tua asta";
+                response.sendRedirect(request.getContextPath() + "/User/AccController?op=sells&message="+message+"&type=-1");
             }
             
         }

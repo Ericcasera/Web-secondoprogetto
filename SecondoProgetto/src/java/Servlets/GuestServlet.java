@@ -41,7 +41,7 @@ public class GuestServlet extends HttpServlet {
         String op = request.getParameter("op");
 
        if(op == null) {
-             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendRedirect(contextPath + "/GuestController?op=loginReq"); 
         }
        
        else if (op.equals(loginRequestPattern))
@@ -100,15 +100,13 @@ public class GuestServlet extends HttpServlet {
             
             if(password != null)
             {
-            request.setAttribute("message", "Riceverai a breve una mail con la password: "+ password);
-            request.setAttribute("type", 1);
-            request.getRequestDispatcher("/Jsp/GuestPages/LoginPage.jsp").forward(request, response);
+                String message = "Riceverai a breve una mail con la password";
+                response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=0");   
             }
             else
             {
-            request.setAttribute("message", "I dati che hai inserito non sono validi");
-            request.setAttribute("type", -1);
-            request.getRequestDispatcher("/Jsp/GuestPages/LoginPage.jsp").forward(request, response);    
+                String message = "I dati che hai inserito non sono validi";
+                response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=-1");     
             }
             
         }
@@ -126,20 +124,18 @@ public class GuestServlet extends HttpServlet {
             
             if(DBManager.newAccountSubscription(tmp))
             {
-            request.setAttribute("message", "Account registrato correttamente");
-            request.setAttribute("type", 1);
-            request.getRequestDispatcher("/Jsp/GuestPages/LoginPage.jsp").forward(request, response);
+                String message = "Registrazione avvenuta con successo";
+                response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=0");   
             }
             else
             {
-            request.setAttribute("message", "Non è stato possibile registrare l'account. Forse lo username o l'indirizzo email non sono univoci");
-            request.setAttribute("type", -1);
-            request.getRequestDispatcher("/Jsp/GuestPages/LoginPage.jsp").forward(request, response);    
+                String message = "Non è stato possibile registrare l'account.";
+                response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=-1");   
             }           
         }
         else 
         {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST);   
+            response.sendRedirect(contextPath + "/GuestController?op=loginReq");  
         }
     }
 

@@ -39,7 +39,7 @@
                     <input type="hidden" name="op" value="search">
                     <input type="hidden" name="page" value="0">
                     <input type="hidden" name="order"  value="1">
-                    <input type="hidden" name="per_page" value="2">
+                    <input type="hidden" name="per_page" value="10">
                     <div class="input-append">
                         <input type="text" class="span4" name="search_query" id="search_query">                  
                         <button type="submit" id="submit_button" class="btn btn-primary">Search</button>
@@ -65,8 +65,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <li><a href="<c:url value="/User/UserController?op=addAuction"/>">Crea nuova asta</a></li>
-                                            <li><a href="<c:url value="/User/AccController?op=account#account"/>">Il mio account</a></li>
-                                            <li><a href="#">Something else here</a></li>
+                                            <li><a href="<c:url value="/User/AccController?op=account"/>">Il mio account</a></li>
                                             <li class="divider"></li>
                                             <li><a href="<c:url value="/LogoutController?op=logout"/>">Logout</a></li>              
                                         </c:otherwise> 

@@ -14,12 +14,12 @@
     </head>
     <body>
         <h1>Hello World!</h1>
-        <form  method="post" action="<c:url value="/User/UserController?op=offcon&id=${requestScope.prod_id}"/>"> 
-        <input type="hidden" name="increment" value="${requestScope.increment}">
-        <input type="hidden" name="base_price" value="${requestScope.base_price}">
+        <form  method="post" action="<c:url value="/User/UserController?op=offcon&id=${param.id}"/>"> 
+        <input type="hidden" name="increment" value="${param.increment}">
+        <input type="hidden" name="base_price" value="${param.base_price}">        
         <input type="hidden" name="prec_op" value="offReq">
         <div class="input-append ">
-            <input class="input-small" type="text" name="offer" value="${requestScope.offer}" readonly="true">
+            <input class="input-small" type="text" name="offer" value="${param.offer}" readonly="true">
             <span class="add-on">$</span> 
         </div> 
         <button type="submit" class="btn btn-primary">Fai un offerta</button>

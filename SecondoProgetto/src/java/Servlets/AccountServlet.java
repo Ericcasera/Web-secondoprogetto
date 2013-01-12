@@ -4,12 +4,10 @@
  */
 package Servlets;
 
-import Beans.Auction;
 import Beans.User;
 import Managers.DBManager;
-import java.io.File;
 import java.io.IOException;
-import java.util.Calendar;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,6 +21,11 @@ public class AccountServlet extends HttpServlet {
 
     private DBManager DBManager;
     private static String accountPattern =  "account";
+    private static String activeSellsPattern =  "sells";
+    private static String activeBuysPattern =  "buys";
+    private static String soldPattern =  "sold";
+    private static String wonPattern =  "won";
+    private static String lostPattern =  "lost";
     
     @Override
     public void init() throws ServletException {
@@ -32,36 +35,40 @@ public class AccountServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       
-        String op = request.getParameter("op");   
+        String op = request.getParameter("op"); 
+        int user_id = ((User)request.getSession().getAttribute("user")).getId();
         request.setAttribute("category_list", DBManager.queryCategoryList()); 
         
         if(op == null) {
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
+            return;
         }
         
         if(op.equals(accountPattern))
         {
         request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response);
         }
-                    /*String json = "[{\"elem\" : \""+ records + "\"},";
-            
-            Iterator iter = result.iterator();      
-            while(iter.hasNext())
-            {
-                Auction tmp = (Auction) iter.next();
-            json += "{\"id\":\""+ tmp.getAuction_id() +"\", ";
-            json += "\"name\":\""+ tmp.getName() +"\", ";
-            json += "\"description\":\""+ tmp.getDescription() +"\", ";
-            json += "\"expiration\":\""+ tmp.getTimeToExpiration() +"\", ";
-            json += "\"image_url\":\""+ tmp.getImage_url() +"\", ";
-            json += "\"current_price\":\""+ tmp.getCurrent_price() +"\", ";
-            json += "\"shipping_price\":\""+ tmp.getShipping_price() +"\"},";
-            }
-            
-            json = json.replaceAll(",$", "]");
+        else if(op.equals(activeSellsPattern)){
+            ArrayList list = DBManager.queryUserActiveSells(user_id);
+            request.setAttribute("result", list);
+            request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response);
+        }        
+        else if(op.equals(activeBuysPattern)){
+            ArrayList list = DBManager.queryUserActiveBuys(user_id);
+            request.setAttribute("result", list);
+            request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
+        }
+        else if(op.equals(soldPattern)){
+            ArrayList list = DBManager.queryUserEndedAuctions(user_id);
+            request.setAttribute("result", list);
+            request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
+        }
+        else if(op.equals(wonPattern)){
+            ArrayList list = DBManager.queryUserWonAuctions(user_id);
+            request.setAttribute("result", list);
+            request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
+        }
 
-            response.setContentType("application/json");
-            response.getWriter().write(json);*/
 
     }
 

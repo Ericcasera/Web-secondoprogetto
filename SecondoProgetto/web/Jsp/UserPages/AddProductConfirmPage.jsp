@@ -4,14 +4,12 @@
     Author     : Daniel
 --%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+
+<jsp:include page="/Jsp/Header.jsp" flush="false"/>
+        
+        <title>Conferma aggiunta asta</title>
     </head>
-    <body>
+<jsp:include page="/Jsp/Body.jsp" flush="false"/>
         <c:set value="${requestScope.auction}" var="auction"/>
         
        <c:out value="Nome : ${auction.name}"/><br>
@@ -29,7 +27,7 @@
            </c:if>            
        </c:forEach>        
        <c:out value="Mancano ${auction.timeToExpiration} alla scadenza"/><br>
-       <c:out value="L'inserzione scadrÃ  il : ${auction.expirationDate}"/><br>
+       <c:out value="L'inserzione scadrà il : ${auction.expirationDate}"/><br>
        
        <form action="<c:url value="/User/UserController?op=AucConfirm"/>" method="post">
            <input type="hidden" value="${auction.name}" name="name">
@@ -44,7 +42,5 @@
            <input type="hidden" value="${auction.category_id}" name="category">
            <button type="submit" >Conferma inserzione</button>
        </form>
-       
-       
-    </body>
-</html>
+            
+<jsp:include page="/Jsp/Footer.jsp" flush="false"/>

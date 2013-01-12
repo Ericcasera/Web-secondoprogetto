@@ -14,6 +14,15 @@ public class Sale {
     private boolean cancelled = false , retreat = false , sold = false;
     private float   retreat_commissions , commissions , price ;
     private long    sale_date;
+    private Auction auction;
+
+    public Auction getAuction() {
+        return auction;
+    }
+
+    public void setAuction(Auction auction) {
+        this.auction = auction;
+    }
 
     public int getAuction_id() {
         return auction_id;
