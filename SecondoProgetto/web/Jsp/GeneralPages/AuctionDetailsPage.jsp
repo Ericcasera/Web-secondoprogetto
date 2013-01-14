@@ -44,6 +44,21 @@
                         
                         return corretto;
         }
+        
+        $(function(){
+        $('#modify_button').click(function(){
+            $(this).hide();
+            $('#desc p').hide();
+            $('#modify_form textarea').text($('#desc p').text());
+            $('#modify_form').show(); 
+            });
+            
+        $('#cancel_modify').click(function(){
+               $('#modify_form').hide();            
+               $('#modify_button').show();
+               $('#desc p').show();
+            });
+        });
 
 </script>
 
@@ -74,14 +89,14 @@
             <tr>
             <td>
             <strong><span class="text-error"> ${auction.timeToExpiration}</span> alla scadenza.</strong><br>
-                Prezzo corrente : <strong><span class="text-error"> ${auction.current_price}</span>$</strong><br>
-                Prezzo spedizione : <strong><span class="text-error"> ${auction.shipping_price}</span>$</strong><br> 
-                Incremento minimo : <strong><span class="text-error"> ${auction.increment_price}</span>$</strong><br><br> 
                 <c:choose>
-                    <c:when test="${auction.cancelled} ">
+                    <c:when test="${auction.cancelled}">
                         <span class="label label-important">Asta anullata</span>     
                     </c:when>   
                     <c:otherwise>
+                        Prezzo corrente : <strong><span class="text-error"> ${auction.current_price}</span>$</strong><br>
+                        Prezzo spedizione : <strong><span class="text-error"> ${auction.shipping_price}</span>$</strong><br> 
+                        Incremento minimo : <strong><span class="text-error"> ${auction.increment_price}</span>$</strong><br><br> 
                         <c:choose>
                             <c:when test="${auction.buyer == null}">
                                 <span class="text-info">Non ci sono ancora offerte per questo prodotto<br><br></span>
@@ -92,33 +107,27 @@
                             </c:otherwise>
                         </c:choose>
                         <c:choose>
-                            <c:when test="${sessionScope.user.role == 1}">
-                                <a href="<c:url value="/Admin/AdminController?op=cancel&id=${auction.auction_id}"/>" class="btn btn-danger">Cancella l'asta</a><br>
-                                <p class="text-info"><small>Il testo verrà inviato a tutti gli utenti coinvolti nell'asta</small></p> 
-                                <textarea name="message" class="span5" rows="6">Gentili utenti, siamo costretti ad annullare quest'asta a causa di violazione di bla bla. La morte vi prenderà</textarea>
+                            <c:when test="${auction.buyer.id == sessionScope.user.id && sessionScope.user.id != null}">  
+                                <p class="text-warning"><small>Non puoi fare offerte dato che sei già in testa</small></p>     
                             </c:when>
+                            <c:when test="${sessionScope.user.role == 1}">  
+                                <p class="text-warning"><small>L'amministratore non può fare offerte</small></p>     
+                            </c:when>     
                             <c:otherwise>
-                                <c:choose>
-                                    <c:when test="${auction.buyer.id == sessionScope.user.id && sessionScope.user.id != null}">  
-                                        <p class="text-warning"><small>Non puoi fare offerte dato che sei già in testa</small></p>     
-                                    </c:when>
-                                    <c:otherwise>
-                                        <form class="form-inline" action="<c:url value="/User/UserController?op=offreq&id=${auction.auction_id}"/>"  onsubmit="return validate();" method="post" id ="offer_form"> 
-                                            <input type="hidden" name="buyer_id" value="<c:out value="${auction.buyer.id}" default="-1"/>" > 
-                                            <input type="hidden" name="increment" value="${auction.increment_price}">
-                                            <input type="hidden" name="base_price" value="${auction.current_price}">
-                                            <div class="input-append ">
-                                                <input class="input-small" type="text" name="offer" value="${auction.current_price + auction.increment_price}" id="input_offer">
-                                                <span class="add-on">$</span> 
-                                            </div> 
-                                            <button type="submit" class="btn btn-primary">Fai un offerta</button>
-                                            <p class="text-info"><small>Il prezzo verrà incrementato automaticamente fino al raggiungimento della tua offerta</small></p><br>
-                                            <span class="text-error" id="error_span"></span>
-                                        </form>      
-                                    </c:otherwise>
-                                </c:choose>        
-                            </c:otherwise>     
-                        </c:choose>               
+                                <form class="form-inline" action="<c:url value="/User/UserController?op=offreq&id=${auction.auction_id}"/>"  onsubmit="return validate();" method="post" id ="offer_form"> 
+                                    <input type="hidden" name="buyer_id" value="<c:out value="${auction.buyer.id}" default="-1"/>" > 
+                                    <input type="hidden" name="increment" value="${auction.increment_price}">
+                                    <input type="hidden" name="base_price" value="${auction.current_price}">
+                                    <div class="input-append ">
+                                        <input class="input-small" type="text" name="offer" value="${auction.current_price + auction.increment_price}" id="input_offer">
+                                        <span class="add-on">$</span> 
+                                    </div> 
+                                    <button type="submit" class="btn btn-primary">Fai un offerta</button>
+                                    <p class="text-info"><small>Il prezzo verrà incrementato automaticamente fino al raggiungimento della tua offerta</small></p><br>
+                                    <span class="text-error" id="error_span"></span>
+                                </form> 
+                            </c:otherwise>            
+                          </c:choose>                       
                     </c:otherwise>
                 </c:choose>      
             </td>
@@ -126,14 +135,34 @@
             </table>
        </td>
     </tr>
-    <tr>
-        <td>
+        </tr>
+    </table>
+        <jsp:include page="/Jsp/Message.jsp" flush="false"/>
+        <div id="desc" class="hero-unit">
+        <c:if test="${!auction.cancelled}">
             <c:if test="${auction.seller.id == sessionScope.user.id && sessionScope.user.id != null}">
-                <a href="#" class="btn btn-success">Modifica descrizione</a><br>
+                <div>
+                    <button class="btn btn-success btn-small" id="modify_button">Modifica descrizione</button>
+                </div>
+                <form id="modify_form" class="hide" action="<c:url value="/User/UserController?op=desc"/>" method="post">
+                    <button type="submit" class="btn btn-primary btn-small" id="confirm_modify">Salva modifiche</button>
+                    <button type="reset" class="btn btn-warning btn-small" id="cancel_modify">Anulla modifiche</button>
+                    <textarea name="desc" style="width:100%" rows="20"></textarea>
+                    <input type="hidden" name="prod_id" value="${auction.auction_id}">
+                </form>
             </c:if>
-        <c:out value="${auction.description} "/>
-        </td>
-    </tr>
-</table>
-        <jsp:include page="/Jsp/Message.jsp" flush="false"/>                  
+            <c:if test="${sessionScope.user.role == 1}">                   
+                <form action="<c:url value="/Admin/AdminController?op=cancel"/>" method="post">
+                    <button class="btn btn-danger btn-small" id="admin_delete">Cancella asta</button>
+                     <p class="text-info"><small>Il testo verrà inviato a tutti gli utenti coinvolti nell'asta</small></p><br>
+                    <textarea name="message" style="width:100%" rows="6">Gentili utenti, siamo costretti ad annullare quest'asta a causa di violazione di bla bla. La morte vi prenderà</textarea>
+                    <input type="hidden" name="prod_id" value="${auction.auction_id}">
+                </form>
+            </c:if>
+        </c:if>
+            <br>
+            <p><c:out value="${auction.description} "/></p>
+            <br><br><br><br>
+        </div>
+            
 <jsp:include page="/Jsp/Footer.jsp" flush="false"/>

@@ -70,7 +70,7 @@
             <div class="login-title" >
                 <h3> Registrazione nuovo account </h3>
             </div>  
-            <form action="GuestController?op=subConfirm" method="post" onSubmit ="return validate(this); " class="form-horizontal">
+            <form action="<c:url value="/GuestController?op=subCon"/>" method="post" onSubmit ="return validate(this); " class="form-horizontal">
 
                   <div class="control-group">
                       <label class="control-label" for="username">*Username</label>
@@ -137,8 +137,8 @@
                 
                   <div class="control-group">
                          <div class="controls">
-                             <button class="btn" type="submit">Invia richiesta</button>
-                             <a class="btn" href="<c:url value="/index.jsp"/> ">Annulla</a>
+                             <button class="btn btn-primary" type="submit">Invia richiesta</button>
+                             <a class="btn btn-warning" href="<c:url value="/" />">Annulla</a>
                          </div>
                   </div>                  
             </form>

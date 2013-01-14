@@ -23,7 +23,7 @@
                 var shipping_price = form.shipping_price.value;
                 var corretto = true;
                 
-                if(name == "" || name == null) {document.getElementById("product_span").innerHTML = "*Obbligatorio"; corretto = false; }
+                if(name == "" || name == null) {document.getElementById("product_span").innerHTML = "*Obbligatorio";corretto = false; }
                 else document.getElementById("product_span").innerHTML ="";
                 
                 if(starting_price.search(regExpCheck) == -1) 
@@ -37,7 +37,7 @@
                         form.increment.value = increment.match(regExpValue);}
                 
                 if(min_price.search(regExpCheck) == -1) 
-                    {document.getElementById("increment_span").innerHTML = "*Il formato non è corretto"; corretto = false;}
+                    {document.getElementById("min_price_span").innerHTML = "*Il formato non è corretto"; corretto = false;}
                     else{document.getElementById("min_price_span").innerHTML = "";
                         form.min_price.value = min_price.match(regExpValue);}
 
@@ -80,7 +80,6 @@
     
 <jsp:include page="/Jsp/Body.jsp" flush="false"/>
             <div id="form_div">
-        <h3 style="text-align: center">Inserisci dati prodotto</h3>
         <form action="<c:url value="/User/UserController?op=AucRequest&prec_op=newAuc"/>" method="post" onsubmit="return validate(this);" class="form-horizontal">
             <input type="hidden" name="image_name" id="image_name">
                  <div class="control-group">
@@ -95,7 +94,7 @@
                              </a>
                          </div>
                   </div> 
-                  <div class="control-group">
+                  <div class="control-group ">
                       <label class="control-label" for="product_name">*Nome prodotto</label>
                          <div class="controls">
                              <input class="input-large" placeholder="Nome prodotto" type="text" name="product_name">

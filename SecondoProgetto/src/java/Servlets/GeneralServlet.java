@@ -97,15 +97,7 @@ public class GeneralServlet extends HttpServlet {
             }
         
             ArrayList result = DBManager.queryOffersLog(auction_id);
-            Auction auction = DBManager.queryAuctionDetails(auction_id);
-        
-            if(result.isEmpty())
-            {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-                return;
-            }       
-            
-            request.setAttribute("auction", auction);
+
             request.setAttribute("log", result);
             request.getRequestDispatcher("/Jsp/GeneralPages/OffersLogPage.jsp").forward(request, response);
         

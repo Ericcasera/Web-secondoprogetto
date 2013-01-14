@@ -15,10 +15,18 @@ public class Auction {
     private int auction_id , category_id , current_offers ;
     private float current_price , shipping_price, starting_price , increment_price , min_price;
     private String name , image_url , description;
-    private boolean cancelled;
+    private boolean cancelled , retreat;
     private long expiration;
     private User seller = null , buyer = null;
 
+    public boolean isRetreat() {
+        return retreat;
+    }
+
+    public void setRetreat(boolean retreat) {
+        this.retreat = retreat;
+    }
+ 
     public User getSeller() {
         return seller;
     }

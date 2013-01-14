@@ -869,8 +869,7 @@ public class DBManager {
             ResultSet rs = null;
             Offer tmp;
             ArrayList list = new ArrayList(60);
-            
-
+           
             String query = "Select username , user_id , price , offer_date "
                          + " from AUTO_INCREMENT_OFFERS natural join users "
                          + " where auction_id = ?"
@@ -1059,6 +1058,63 @@ public class DBManager {
             return list;
     }
     
+    public ArrayList queryUserLostAuctions(int user_id){
+        
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            Auction auction;
+            User seller;
+            ArrayList list = new ArrayList(20);
+
+            String query = "Select * "
+                    + " from ENDED_AUCTIONS join users on seller_id = user_id "
+                    + " where auction_id in ("
+                    + " (Select distinct auction_id from AUTO_INCREMENT_OFFERS where user_id = ?)"
+                    + " except "
+                    + " (Select auction_id from SALES where buyer_id = ?)"
+                    + " )";
+              
+            try {     
+            stm = con.prepareStatement(query);
+            
+            stm.setInt(1, user_id);
+            stm.setInt(2, user_id);
+            
+            rs = stm.executeQuery();
+            
+            while(rs.next())
+                {
+                    auction = new Auction();
+                    seller = new User();
+                    auction.setExpiration(rs.getTimestamp("end_date").getTime());
+                    auction.setAuction_id(rs.getInt("auction_id"));
+                    auction.setImage_url(rs.getString("image_url"));      
+                    auction.setName(rs.getString("auction_name"));
+                    auction.setCancelled(rs.getBoolean("cancelled"));
+                    auction.setRetreat(rs.getBoolean("retreat"));
+                    seller.setEmail(rs.getString("email"));
+                    seller.setUsername(rs.getString("username"));
+                    auction.setSeller(seller);
+                    list.add(auction);
+                }
+            rs.close(); 
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{          
+                   stm.close();  
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+            
+            return list;
+    }
+    
+    
     public ArrayList queryUserEndedAuctions(int user_id){
         
             PreparedStatement stm = null ;
@@ -1134,5 +1190,232 @@ public class DBManager {
             return list;
     }
     
+    public void modifyDescription(String desc , int id){
+            
+            String query = "Update active_auctions set description = ? where auction_id = ? ";
+            String query2 ="Update ended_auctions set description = ? where auction_id = ? ";
+            
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            
+            try {     
+            stm = con.prepareStatement(query);
+            stm.setString(1, desc);
+            stm.setInt(2, id);
+
+            stm.executeUpdate();
+
+            stm.close();
+            
+            stm = con.prepareStatement(query2);
+            stm.setString(1, desc);
+            stm.setInt(2, id);
+
+            stm.executeUpdate();
+   
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{     
+                   stm.close();   
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+     }
+    
+     public void queryAdminTopSeller(String desc , int id){
+            
+            String query = "Update active_auctions set description = ? where auction_id = ? ";
+            String query2 ="Update ended_auctions set description = ? where auction_id = ? ";
+            
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            
+            try {     
+            stm = con.prepareStatement(query);
+            stm.setString(1, desc);
+            stm.setInt(2, id);
+
+            stm.executeUpdate();
+
+            stm.close();
+            
+            stm = con.prepareStatement(query2);
+            stm.setString(1, desc);
+            stm.setInt(2, id);
+
+            stm.executeUpdate();
+   
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{     
+                   stm.close();   
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+     }
+    
+     public void queryAdminTopBuyer(String desc , int id){
+            
+            String query = "Update active_auctions set description = ? where auction_id = ? ";
+            String query2 ="Update ended_auctions set description = ? where auction_id = ? ";
+            
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            
+            try {     
+            stm = con.prepareStatement(query);
+            stm.setString(1, desc);
+            stm.setInt(2, id);
+
+            stm.executeUpdate();
+
+            stm.close();
+            
+            stm = con.prepareStatement(query2);
+            stm.setString(1, desc);
+            stm.setInt(2, id);
+
+            stm.executeUpdate();
+   
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{     
+                   stm.close();   
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+     }
+     
+     public void queryAdminCancelAuction(int id){
+            
+            String query = "Update active_auctions set cancelled = true where auction_id = ? ";         
+            PreparedStatement stm = null ;
+            
+            try {     
+            stm = con.prepareStatement(query);
+            stm.setInt(1, id);
+
+            stm.executeUpdate();
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{     
+                   stm.close();   
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+     }
+     
+     public ArrayList queryAdminEndedAuctions(){
+            
+            PreparedStatement stm = null ;
+            PreparedStatement stm2 = null ;
+            ResultSet rs = null;
+            Auction auction;
+            Sale sale;
+            User buyer;
+            ArrayList list = new ArrayList(100);
+            ArrayList users = new ArrayList(30);
+
+            String query = "Select * from (ended_auctions natural left join sales) "
+                    + " left join users on seller_id = user_id"
+                    + " where end_date < ? "
+                    + " order_by end_date ";
+            
+            String buyer_query = "Select user_id , username , email , address , city , country , phone "
+                    + " from sales join users on buyer_id = user_id ";
+              
+            try {     
+            stm = con.prepareStatement(query);
+            stm2 = con.prepareStatement(buyer_query);
+            
+            rs = stm2.executeQuery();
+            
+            while(rs.next())
+            {
+            buyer = new User();
+            buyer.setId(rs.getInt("id"));
+            buyer.setUsername(rs.getString("username"));
+            buyer.setAddress(rs.getString("address"));
+            buyer.setCity(rs.getString("city"));
+            buyer.setCountry(rs.getString("country"));
+            buyer.setEmail(rs.getString("email"));
+            buyer.setPhone(rs.getString("phone")); 
+            }
+            
+            stm.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+            
+            rs = stm.executeQuery();
+            
+            while(rs.next())
+                {
+                    auction = new Auction();
+                    sale = new Sale();
+                    buyer = new User();
+
+                    auction.setAuction_id(rs.getInt("auction_id"));
+                    auction.setImage_url(rs.getString("image_url"));
+                    auction.setShipping_price(rs.getFloat("starting_price"));
+                    auction.setIncrement_price(rs.getFloat("price_increment"));
+                    auction.setMin_price(rs.getFloat("min_price")); 
+                    auction.setShipping_price(rs.getFloat("shipping_price")); 
+                    auction.setExpiration(rs.getTimestamp("end_date").getTime()); 
+                    auction.setName(rs.getString("auction_name"));
+                    
+                    if(rs.getBoolean("cancelled")){
+                    sale.setCancelled(true);
+                    }
+                    else if(rs.getBoolean("retreat")){
+                    sale.setRetreat(true);
+                    sale.setRetreat_commissions(rs.getFloat("retreat_commissions"));
+                    }
+                    else{
+                    sale.setSold(true);
+                    sale.setPrice(rs.getFloat("price"));
+                    sale.setCommissions(rs.getFloat("commissions"));  
+                    buyer.setUsername(rs.getString("username"));
+                    buyer.setAddress(rs.getString("address"));
+                    buyer.setCity(rs.getString("city"));
+                    buyer.setCountry(rs.getString("country"));
+                    buyer.setEmail(rs.getString("email"));
+                    buyer.setPhone(rs.getString("phone"));
+                    auction.setCurrent_price(sale.getPrice() - auction.getShipping_price());
+                    auction.setBuyer(buyer);
+                    }
+                    sale.setAuction(auction);
+                    list.add(sale);
+                }
+            rs.close(); 
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{          
+                   stm.close();  
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+            
+            return list;
+    }
     
 }

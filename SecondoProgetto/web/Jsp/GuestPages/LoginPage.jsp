@@ -12,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
         <link  href="<c:url value="/Bootstrap/css/grafica.css"/>" rel="stylesheet">
         <link  href="<c:url value="/Bootstrap/css/bootstrap.css"/>" rel="stylesheet">
-        <script src="<c:url value="/Bootstrap/js/jquery-1.8.2.js"/>"></script>
+        <script src="<c:url value="/Bootstrap/js/jquery-1.8.3.js"/>"></script>
         <script src="<c:url value="/Bootstrap/js/bootstrap.min.js"/>"></script>
         <title>Login</title>
     </head>

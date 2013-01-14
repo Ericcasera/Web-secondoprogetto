@@ -19,7 +19,7 @@
             <div class="login-title" >
                 <h3> Recupero Password </h3>
             </div>  
-            <form action="GuestController?op=pswConfirm" method="post" class="form-horizontal">
+            <form action="<c:url value="/GuestController?op=pswCon"/>" method="post" class="form-horizontal">
                   <div class="control-group">
                       <label class="control-label" for="username">Username</label>
                          <div class="controls">
@@ -35,7 +35,7 @@
                   <div class="control-group">
                          <div class="controls">
                              <button class="btn" type="submit">Invia richiesta</button>
-                             <a class="btn" href="<c:url value="/index.jsp" />">Annulla</a>
+                             <a class="btn" href="<c:url value="/GuestController?op=loginReq"/>">Annulla</a>
                          </div>
                   </div>                 
             </form>

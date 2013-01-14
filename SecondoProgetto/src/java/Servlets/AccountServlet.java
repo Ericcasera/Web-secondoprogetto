@@ -68,6 +68,11 @@ public class AccountServlet extends HttpServlet {
             request.setAttribute("result", list);
             request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
         }
+        else if(op.equals(lostPattern)){
+            ArrayList list = DBManager.queryUserLostAuctions(user_id);
+            request.setAttribute("result", list);
+            request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
+        }
 
 
     }

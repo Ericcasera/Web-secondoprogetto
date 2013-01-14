@@ -27,6 +27,7 @@ public class UserServlet extends HttpServlet {
     private static String offerRequestPattern =  "offreq";
     private static String offerConfirmPattern =  "offcon";
     private static String addAuctionPageRequestPattern = "addAuction";
+    private static String DescriptionModificationPattern = "desc";
     
     @Override
     public void init() throws ServletException {
@@ -53,7 +54,7 @@ public class UserServlet extends HttpServlet {
         prod_id = Integer.parseInt(request.getParameter("id"));
         
         }catch(Exception ex){  
-         response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
          return;
         }
         
@@ -180,6 +181,21 @@ public class UserServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/User/AccController?op=sells&message="+message+"&type=-1");
             }
             
+        }
+        
+        else if(op.equals(DescriptionModificationPattern))
+        {
+            String desc = request.getParameter("desc");
+            int prod_id = Integer.parseInt(request.getParameter("prod_id"));
+            
+            DBManager.modifyDescription(desc, prod_id);
+            
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id);  
+        }
+        
+        else
+        {
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");  
         }
     }
 

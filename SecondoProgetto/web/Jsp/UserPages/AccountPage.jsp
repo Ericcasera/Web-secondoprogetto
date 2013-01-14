@@ -112,7 +112,9 @@
                     <tr>
                         <td class="span3"><img height="100px" width="100px" src="<c:url value="/Images"/>/${auction.image_url}"/></td>
                         <td class="span3">
-                            <strong><c:out value="${auction.name}"/></strong><br>
+                            <strong><c:out value="${auction.name}"/></strong>
+                            <small>[<a href="<c:url value="/General/GeneralController?op=log&id=${auction.auction_id}"/>">Log offerte</a>]</small>
+                            <br>
                             <c:out value="Venduto da ${auction.seller.username}"/><br>
                             <small><c:out value="${auction.seller.email}"/></small>
                         </td>
@@ -142,7 +144,9 @@
                     <tr>
                         <td><img height="100px" width="100px" src="<c:url value="/Images"/>/${auction.image_url}"/></td>
                         <td>
-                            <strong><c:out value="${auction.name}"/></strong><br>
+                            <strong><c:out value="${auction.name}"/></strong>
+                            <small>[<a href="<c:url value="/General/GeneralController?op=log&id=${auction.auction_id}"/>">Log offerte</a>]</small>
+                            <br>
                             <c:choose>
                                 <c:when test="${sale.cancelled}">
                                     <span class="label label-important">Asta anullata</span>   
@@ -182,6 +186,40 @@
                 </tbody> 
             </table>        
         </c:when>
+        <c:when test="${op == 'lost'}">
+            <h3>Aste passate perse</h3>
+            <table class="table">
+                <thead><th class="span3"></th><th class="span3"></th><th></th></thead>
+                <tbody>
+                <c:forEach items="${requestScope.result}" var="auction">
+                    <tr>
+                        <td class="span3"><img height="100px" width="100px" src="<c:url value="/Images"/>/${auction.image_url}"/></td>
+                        <td class="span3">
+                            <strong><c:out value="${auction.name}"/></strong>
+                            <small>[<a href="<c:url value="/General/GeneralController?op=log&id=${auction.auction_id}"/>">Log offerte</a>]</small>
+                            <br>
+                            <c:choose>   
+                                <c:when test="${auction.cancelled}">
+                                    <span class="label label-important">Asta anullata</span><br>   
+                                </c:when>
+                                <c:when test="${auction.retreat}">
+                                    <span class="label label-info">Asta ritirata</span><br>   
+                                </c:when>   
+                                <c:otherwise>
+                                    <span class="label label-success">Asta venduta</span><br>   
+                                </c:otherwise>  
+                            </c:choose>
+                            <c:out value="Venduto da ${auction.seller.username}"/><br>
+                            <small><c:out value="${auction.seller.email}"/></small>
+                        </td>
+                        <td>
+                            Terminata in data <br><strong>${auction.expirationDate}</strong>
+                        </td>                                      
+                    </tr>                                              
+                </c:forEach>
+                </tbody> 
+            </table>        
+        </c:when> 
     </c:choose>    
 </div>
 <jsp:include page="/Jsp/Footer.jsp" flush="false"/>
