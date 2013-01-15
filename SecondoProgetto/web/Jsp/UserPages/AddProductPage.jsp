@@ -105,7 +105,7 @@
                       <label class="control-label" for="description">*Descrizione</label>
                          <div class="controls">
                              <textarea name="description" class="span5" rows="4"></textarea>
-                             <br><span class="text-info">Potrai cambiere la descrizione in qualsiasi momento</span>
+                             <br><span class="text-info">Potrai cambiare la descrizione in qualsiasi momento</span>
                          </div>
                   </div>
                   <div class="control-group">
@@ -153,7 +153,7 @@
                                 <span class="add-on">$</span> 
                              </div>  
                              <span class="text-error" id="min_price_span"></span>
-                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non è stato raggiunto , l'asta verrà annullata</span>
+                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non è stato raggiunto, l'asta verrà annullata</span>
                          </div>
                   </div>  
                   <div class="control-group">
@@ -164,7 +164,7 @@
                                     <span class="add-on">$</span> 
                                 </div>
                              <span class="text-error" id="shipping_price_span"></span>
-                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non è stato raggiunto , l'asta verrà annullata</span>
+                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non è stato raggiunto, l'asta verrà annullata</span>
                          </div>
                   </div> 
                  <div class="control-group">

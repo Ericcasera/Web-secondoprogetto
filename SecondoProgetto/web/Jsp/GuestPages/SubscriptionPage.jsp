@@ -69,7 +69,8 @@
         <div class="login well">
             <div class="login-title" >
                 <h3> Registrazione nuovo account </h3>
-            </div>  
+            </div>
+            <br>
             <form action="<c:url value="/GuestController?op=subCon"/>" method="post" onSubmit ="return validate(this); " class="form-horizontal">
 
                   <div class="control-group">
@@ -103,7 +104,7 @@
                 
                   <div class="control-group">
                         <div class="controls">
-                             <span>Informazioni per le spedizioni</span>
+                            <span><b>Informazioni per le spedizioni</b></span>
                         </div>
                   </div> 
                 

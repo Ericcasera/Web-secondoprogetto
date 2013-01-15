@@ -14,10 +14,7 @@
         <script src="<c:url value="/Bootstrap/js/jquery-1.8.3.min.js"/>"></script>
         <script src="<c:url value="/Bootstrap/js/bootstrap.min.js"/>"></script>
 <div>
-    <h1>
-        Titolo del sito
-    </h1>
-    <br><br>
+    <img src="/SecondoProgetto/Images-site/logo.png" alt="logo">
 </div>
 <div class="navbar">
     <div class="navbar-inner">

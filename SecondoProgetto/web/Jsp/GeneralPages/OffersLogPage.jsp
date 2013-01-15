@@ -4,7 +4,7 @@
     <title>Log offerte</title>
 </head>
 
-<jsp:include page="/Jsp/Body.jsp" flush="false"/>
+<jsp:include page="/Jsp/AccountBody.jsp" flush="false"/>
 
 <h5>Offerte per asta #${param.id}</h5>
         <c:choose>

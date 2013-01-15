@@ -78,10 +78,7 @@
         </script>
     </head>
     <div>
-    <h1>
-        Titolo del sito
-    </h1>
-    <br><br>
+    <img src="/SecondoProgetto/Images-site/logo.png" alt="logo">
 </div>
 <div class="navbar">
     <div class="navbar-inner">
@@ -139,12 +136,10 @@
         </div>
     </div>
 </div>  
-</head>
 <body>
     <div class="container-fluid" >
         <div class="row-fluid">
-            <div class="span1"></div>  
-            <div class="span10 container-fluid" >
+            <div class="span12 container-fluid" >
                 <div class="row-fluid">
                     <div id="table_div">
                         <div class="navbar">

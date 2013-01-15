@@ -19,7 +19,8 @@
     <body>       
         <div class="login well">
             <div class="login-title" >
-                <h1> Secondo Progetto </h1>
+                <img src="/SecondoProgetto/Images-site/logo.png" alt="logo">
+                <br>
                 <br>
             </div>
             
