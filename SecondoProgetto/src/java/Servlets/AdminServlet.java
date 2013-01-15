@@ -6,7 +6,6 @@ package Servlets;
 
 import Managers.DBManager;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +51,11 @@ public class AdminServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + id); 
         }
         
+        else if(op.equals(endedAuctionsPattern))     
+        {
+        request.setAttribute("result", DBManager.queryAdminEndedAuctions());
+        request.getRequestDispatcher("/Jsp/AdminPages/EndedAuctionsPage.jsp").forward(request, response);
+        }  
         
     }
 

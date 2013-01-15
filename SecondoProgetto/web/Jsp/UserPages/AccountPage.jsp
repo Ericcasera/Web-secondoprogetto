@@ -142,7 +142,7 @@
                 <c:forEach items="${requestScope.result}" var="sale">
                     <c:set value="${sale.auction}" var="auction"/>
                     <tr>
-                        <td><img height="100px" width="100px" src="<c:url value="/Images"/>/${auction.image_url}"/></td>
+                        <td><img height="150px" width="150px" src="<c:url value="/Images"/>/${auction.image_url}"/></td>
                         <td>
                             <strong><c:out value="${auction.name}"/></strong>
                             <small>[<a href="<c:url value="/General/GeneralController?op=log&id=${auction.auction_id}"/>">Log offerte</a>]</small>
@@ -175,6 +175,7 @@
                             Prezzo prodotto   : <strong><span class="text-error"> ${auction.current_price}</span>$</strong><br>
                             Prezzo spedizione : <strong><span class="text-error"> ${auction.shipping_price}</span>$</strong><br> 
                             -------------------------------- <br>
+                            Commissioni :&ensp;<strong><span class="text-error">${sale.retreat_commissions}</span>$</strong><br>
                             Prezzo Totale : <strong><span class="text-error"> ${sale.price}</span>$</strong><br>
                             </p>  
                         </td>

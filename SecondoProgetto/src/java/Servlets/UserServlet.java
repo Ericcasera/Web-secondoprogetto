@@ -14,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -28,6 +29,10 @@ public class UserServlet extends HttpServlet {
     private static String offerConfirmPattern =  "offcon";
     private static String addAuctionPageRequestPattern = "addAuction";
     private static String DescriptionModificationPattern = "desc";
+
+    private enum Operation {
+        Offer , Add;
+    } 
     
     @Override
     public void init() throws ServletException {
@@ -37,13 +42,13 @@ public class UserServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       
-        String op = request.getParameter("op");   
+        String op = request.getParameter("op");
+        HttpSession session = request.getSession(false);
         request.setAttribute("category_list", DBManager.queryCategoryList()); 
         
         if(op == null) {
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
         }
-        
         else if(op.equals(offerRequestPattern))           
         {
         int user_id , prod_id;      
@@ -58,12 +63,14 @@ public class UserServlet extends HttpServlet {
          return;
         }
         
-        if(user_id == ((User)request.getSession().getAttribute("user")).getId())
+        if(user_id == ((User)session.getAttribute("user")).getId())
         {        
             String message = "Sei già in testa, non puoi fare altre offerte!";
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id + "&message=" + message + "&type=-1");
             return;
         }
+        
+        session.setAttribute("op", Operation.Offer); //Inizio il procedimento dell'offerta.
  
         request.getRequestDispatcher("/Jsp/UserPages/OfferConfirmPage.jsp").forward(request, response);
 
@@ -73,6 +80,7 @@ public class UserServlet extends HttpServlet {
         
         int prod_id;
         float increment , offer , base_price;
+        Operation operation;
         
         try{
 
@@ -80,17 +88,21 @@ public class UserServlet extends HttpServlet {
         increment =   Float.parseFloat(request.getParameter("increment"));
         offer =       Float.parseFloat(request.getParameter("offer"));
         base_price =  Float.parseFloat(request.getParameter("base_price"));
+        operation =  (Operation) session.getAttribute("op");
         
-        if(!"offReq".equals(request.getParameter("prec_op")))
+        if(!"offReq".equals(request.getParameter("prec_op")) || operation != Operation.Offer)
         {
         response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id);
+        return;
         }   
         }catch(Exception ex){  
          response.sendError(HttpServletResponse.SC_BAD_REQUEST);
          return;
         }     
-         
-        if(DBManager.addNewOffer(prod_id, offer, ((User)request.getSession().getAttribute("user")).getId(), increment , base_price))
+        
+        session.removeAttribute("op"); //In qusto modo posso fare un offerta solo se prima sono stato nella pagina di request
+        
+        if(DBManager.addNewOffer(prod_id, offer, ((User)session.getAttribute("user")).getId(), increment , base_price))
             {
             String message = "La tua offerta e' stata aggiunta con successo";
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id + "&message=" + message + "&type=1");
@@ -121,7 +133,7 @@ public class UserServlet extends HttpServlet {
             tmp.setMin_price(Float.parseFloat(request.getParameter("min_price")));
             tmp.setName(request.getParameter("product_name"));
             User x = new User();
-            x.setId(((User)request.getSession().getAttribute("user")).getId());
+            x.setId(((User)session.getAttribute("user")).getId());
             tmp.setSeller(x);
             tmp.setShipping_price(Float.parseFloat(request.getParameter("shipping_price")));
             tmp.setStarting_price(Float.parseFloat(request.getParameter("starting_price")));
@@ -144,7 +156,7 @@ public class UserServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
             }
-            
+            session.setAttribute("op", Operation.Add);
             request.setAttribute("auction", tmp);
             request.getRequestDispatcher("/Jsp/UserPages/AddProductConfirmPage.jsp").forward(request, response);
             
@@ -154,6 +166,11 @@ public class UserServlet extends HttpServlet {
         {
         Auction tmp = new Auction();
             try{
+                if(((Operation) session.getAttribute("op")) != Operation.Add )
+                {
+                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");     
+                return;
+                }
             tmp.setDescription(request.getParameter("description"));
             tmp.setIncrement_price(Float.parseFloat(request.getParameter("increment_price")));
             tmp.setMin_price(Float.parseFloat(request.getParameter("min_price")));
@@ -168,9 +185,11 @@ public class UserServlet extends HttpServlet {
             tmp.setCategory_id(Integer.parseInt(request.getParameter("category")));
             
             }catch(Exception ex){
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");   
             return;
             }
+            
+            session.removeAttribute("op");
             
             if(DBManager.addNewAuction(tmp)) {
                 String message = "La tua asta e' stata aggiunta con successo";

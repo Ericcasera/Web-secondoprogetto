@@ -1325,39 +1325,24 @@ public class DBManager {
      public ArrayList queryAdminEndedAuctions(){
             
             PreparedStatement stm = null ;
-            PreparedStatement stm2 = null ;
             ResultSet rs = null;
             Auction auction;
             Sale sale;
-            User buyer;
+            User buyer , seller;
             ArrayList list = new ArrayList(100);
-            ArrayList users = new ArrayList(30);
 
-            String query = "Select * from (ended_auctions natural left join sales) "
-                    + " left join users on seller_id = user_id"
+            String query = "Select AUCTION_ID , AUCTION_NAME , STARTING_PRICE , PRICE_INCREMENT , MIN_PRICE , SHIPPING_PRICE "
+                    + " , IMAGE_URL , CANCELLED , SOLD , RETREAT , RETREAT_COMMISSIONS , PRICE , COMMISSIONS , end_date "
+                    + " , s.username as seller_username , s.email as seller_email , s.COUNTRY as seller_country , s.CITY as seller_city"
+                    + " , s.ADDRESS as seller_address , s.PHONE as seller_phone "
+                    + " , b.username as buyer_username , b.email as buyer_email , b.COUNTRY as buyer_country , b.CITY as buyer_city "
+                    + " , b.ADDRESS as buyer_address , b.PHONE as buyer_phone "
+                    + " from (( ended_auctions natural left join sales ) join users s on seller_id = s.user_id) left join users b on buyer_id = b.USER_ID "
                     + " where end_date < ? "
-                    + " order_by end_date ";
-            
-            String buyer_query = "Select user_id , username , email , address , city , country , phone "
-                    + " from sales join users on buyer_id = user_id ";
+                    + " order by end_date desc" ;
               
             try {     
             stm = con.prepareStatement(query);
-            stm2 = con.prepareStatement(buyer_query);
-            
-            rs = stm2.executeQuery();
-            
-            while(rs.next())
-            {
-            buyer = new User();
-            buyer.setId(rs.getInt("id"));
-            buyer.setUsername(rs.getString("username"));
-            buyer.setAddress(rs.getString("address"));
-            buyer.setCity(rs.getString("city"));
-            buyer.setCountry(rs.getString("country"));
-            buyer.setEmail(rs.getString("email"));
-            buyer.setPhone(rs.getString("phone")); 
-            }
             
             stm.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
             
@@ -1366,8 +1351,8 @@ public class DBManager {
             while(rs.next())
                 {
                     auction = new Auction();
+                    seller = new User();
                     sale = new Sale();
-                    buyer = new User();
 
                     auction.setAuction_id(rs.getInt("auction_id"));
                     auction.setImage_url(rs.getString("image_url"));
@@ -1378,25 +1363,36 @@ public class DBManager {
                     auction.setExpiration(rs.getTimestamp("end_date").getTime()); 
                     auction.setName(rs.getString("auction_name"));
                     
+                    seller.setUsername(rs.getString("seller_username"));
+                    seller.setAddress(rs.getString("seller_address"));
+                    seller.setCity(rs.getString("seller_city"));
+                    seller.setCountry(rs.getString("seller_country"));
+                    seller.setEmail(rs.getString("seller_email"));
+                    seller.setPhone(rs.getString("seller_phone"));
+                    
+                    auction.setSeller(seller);
+                    
                     if(rs.getBoolean("cancelled")){
-                    sale.setCancelled(true);
+                        sale.setCancelled(true);
                     }
                     else if(rs.getBoolean("retreat")){
-                    sale.setRetreat(true);
-                    sale.setRetreat_commissions(rs.getFloat("retreat_commissions"));
+                        sale.setRetreat(true);
+                        sale.setRetreat_commissions(rs.getFloat("retreat_commissions"));
                     }
                     else{
-                    sale.setSold(true);
-                    sale.setPrice(rs.getFloat("price"));
-                    sale.setCommissions(rs.getFloat("commissions"));  
-                    buyer.setUsername(rs.getString("username"));
-                    buyer.setAddress(rs.getString("address"));
-                    buyer.setCity(rs.getString("city"));
-                    buyer.setCountry(rs.getString("country"));
-                    buyer.setEmail(rs.getString("email"));
-                    buyer.setPhone(rs.getString("phone"));
-                    auction.setCurrent_price(sale.getPrice() - auction.getShipping_price());
-                    auction.setBuyer(buyer);
+                        buyer = new User();
+                        
+                        sale.setSold(true);
+                        sale.setPrice(rs.getFloat("price"));
+                        sale.setCommissions(rs.getFloat("commissions"));  
+                        buyer.setUsername(rs.getString("buyer_username"));
+                        buyer.setAddress(rs.getString("buyer_address"));
+                        buyer.setCity(rs.getString("buyer_city"));
+                        buyer.setCountry(rs.getString("buyer_country"));
+                        buyer.setEmail(rs.getString("buyer_email"));
+                        buyer.setPhone(rs.getString("buyer_phone"));
+                        auction.setCurrent_price(sale.getPrice() - auction.getShipping_price());
+                        auction.setBuyer(buyer);
                     }
                     sale.setAuction(auction);
                     list.add(sale);

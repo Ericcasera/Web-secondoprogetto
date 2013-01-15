@@ -54,7 +54,7 @@
                                 <ul class="dropdown-menu">  
                                     <c:choose>
                                         <c:when test="${sessionScope.user.role == 1}">
-                                            <li><a href="#">Admin options</a></li>
+                                            <li><a href="<c:url value="/Admin/AdminController?op=ended"/>">Aste terminate</a></li>
                                             <li><a href="#">Another action</a></li>
                                             <li><a href="#">Something else here</a></li>
                                             <li class="divider"></li>
