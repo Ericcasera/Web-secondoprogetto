@@ -14,7 +14,7 @@
         <script src="<c:url value="/Bootstrap/js/jquery-1.8.3.min.js"/>"></script>
         <script src="<c:url value="/Bootstrap/js/bootstrap.min.js"/>"></script>
 <div>
-    <img src="/SecondoProgetto/Images-site/logo.png" alt="logo">
+    <img src="<c:url value="/Images-site/logo.png"/>" alt="logo">
 </div>
 <div class="navbar">
     <div class="navbar-inner">
@@ -55,13 +55,13 @@
                                     <c:choose>
                                         <c:when test="${sessionScope.user.role == 1}">
                                             <li><a href="<c:url value="/Admin/AdminController?op=ended"/>">Aste terminate</a></li>
-                                            <li><a href="#">Another action</a></li>
-                                            <li><a href="#">Something else here</a></li>
+                                            <li><a href="<c:url value="/Admin/AdminController?op=top"/>">Migliori utenti</a></li>
                                             <li class="divider"></li>
                                             <li><a href="<c:url value="/LogoutController?op=logout"/>">Logout</a></li>
                                         </c:when>
                                         <c:otherwise>
                                             <li><a href="<c:url value="/User/UserController?op=addAuction"/>">Crea nuova asta</a></li>
+                                            <li><a href="<c:url value="/User/UserController?op=upload"/>">Upload immagine</a></li>
                                             <li><a href="<c:url value="/User/AccController?op=account"/>">Il mio account</a></li>
                                             <li class="divider"></li>
                                             <li><a href="<c:url value="/LogoutController?op=logout"/>">Logout</a></li>              

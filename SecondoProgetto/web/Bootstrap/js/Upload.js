@@ -69,6 +69,7 @@
                queue.splice(0, queue.length);
                $(table + ' tbody').fadeOut("slow", function(){
                    $(this).html("");
+                   $(this).fadeIn();
                    });
                });
      
@@ -104,7 +105,7 @@
                             $(row).find('.btn-danger').hide();
                             $(row).find('.btn-warning').show();        
                             $(row).find('.label')
-                                  .html("Upload completato")
+                                  .html("Upload completato");
                             }, 
                             error:   function () {
                             $(bar).addClass("bar-danger")

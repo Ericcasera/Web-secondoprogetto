@@ -29,7 +29,8 @@ public class UserServlet extends HttpServlet {
     private static String offerConfirmPattern =  "offcon";
     private static String addAuctionPageRequestPattern = "addAuction";
     private static String DescriptionModificationPattern = "desc";
-
+    private static String uploadPagePattern = "upload";
+    
     private enum Operation {
         Offer , Add;
     } 
@@ -212,6 +213,10 @@ public class UserServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + prod_id);  
         }
         
+        else if(op.equals(uploadPagePattern))
+        {
+        request.getRequestDispatcher("/Jsp/UserPages/UploadPage.jsp").forward(request, response); 
+        }      
         else
         {
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");  

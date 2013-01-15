@@ -8,6 +8,7 @@ import Beans.Auction;
 import Beans.Category;
 import Beans.Offer;
 import Beans.Sale;
+import Beans.TopUser;
 import Beans.User;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -965,12 +966,13 @@ public class DBManager {
             Auction tmp;
             ArrayList list = new ArrayList(20);
 
-            String query = "Select * from users_offers natural join ACTIVE_AUCTIONS where user_id = ?";
+            String query = "Select * from users_offers natural join ACTIVE_AUCTIONS where user_id = ? and end_date > ? order by end_date";
               
             try {     
             stm = con.prepareStatement(query);
             
             stm.setInt(1, user_id);
+            stm.setTimestamp(2, new Timestamp(Calendar.getInstance().getTimeInMillis()));
             
             rs = stm.executeQuery();
             
@@ -1226,29 +1228,35 @@ public class DBManager {
             }
      }
     
-     public void queryAdminTopSeller(String desc , int id){
+     public ArrayList queryAdminTopSeller(){
             
-            String query = "Update active_auctions set description = ? where auction_id = ? ";
-            String query2 ="Update ended_auctions set description = ? where auction_id = ? ";
+          String query = "Select count(*) as auctions , sum(price) as total , username , email "
+                  + " from (sales natural join ENDED_AUCTIONS) join users on seller_id = user_id "
+                  + " group by seller_id , username , email "
+                  + " order by total desc FETCH FIRST 10 ROWS ONLY";
             
             PreparedStatement stm = null ;
             ResultSet rs = null;
+            ArrayList list = new ArrayList(15);
+            TopUser user = null;
             
             try {     
             stm = con.prepareStatement(query);
-            stm.setString(1, desc);
-            stm.setInt(2, id);
 
-            stm.executeUpdate();
-
-            stm.close();
+            rs = stm.executeQuery();
             
-            stm = con.prepareStatement(query2);
-            stm.setString(1, desc);
-            stm.setInt(2, id);
-
-            stm.executeUpdate();
-   
+            while(rs.next())
+            {
+            user = new TopUser();
+            user.setAuctions_number(rs.getInt("auctions"));
+            user.setTotal_price(rs.getFloat("total"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            list.add(user);
+            }
+            
+            
+            rs.close();
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
         }
@@ -1259,32 +1267,39 @@ public class DBManager {
                  catch (Exception ex) {
                      Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
                  }
-            }
+            }        
+            return list;   
      }
     
-     public void queryAdminTopBuyer(String desc , int id){
+     public ArrayList queryAdminTopBuyer(){
             
-            String query = "Update active_auctions set description = ? where auction_id = ? ";
-            String query2 ="Update ended_auctions set description = ? where auction_id = ? ";
+            String query = "Select count(*) as auctions , sum(price) as total , username , email "
+                    + " from sales join users on buyer_id = user_id "
+                    + " group by buyer_id , username , email "
+                    + " order by total desc FETCH FIRST 10 ROWS ONLY";
             
             PreparedStatement stm = null ;
             ResultSet rs = null;
+            ArrayList list = new ArrayList(15);
+            TopUser user = null;
             
             try {     
             stm = con.prepareStatement(query);
-            stm.setString(1, desc);
-            stm.setInt(2, id);
 
-            stm.executeUpdate();
-
-            stm.close();
+            rs = stm.executeQuery();
             
-            stm = con.prepareStatement(query2);
-            stm.setString(1, desc);
-            stm.setInt(2, id);
-
-            stm.executeUpdate();
-   
+            while(rs.next())
+            {
+            user = new TopUser();
+            user.setAuctions_number(rs.getInt("auctions"));
+            user.setTotal_price(rs.getFloat("total"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            list.add(user);
+            }
+            
+            
+            rs.close();
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
         }
@@ -1295,7 +1310,8 @@ public class DBManager {
                  catch (Exception ex) {
                      Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
                  }
-            }
+            }        
+            return list;     
      }
      
      public void queryAdminCancelAuction(int id){

@@ -19,7 +19,7 @@
     <body>       
         <div class="login well">
             <div class="login-title" >
-                <img src="/SecondoProgetto/Images-site/logo.png" alt="logo">
+                <img src="<c:url value="/Images-site/logo.png"/>" alt="logo">
                 <br>
                 <br>
             </div>

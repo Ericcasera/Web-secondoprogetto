@@ -7,9 +7,7 @@
 
 <jsp:include page="/Jsp/Header.jsp" flush="false"/>
 
-<link rel="stylesheet" href="<c:url value="/Bootstrap/css/Upload.css"/>">
 <link  href="<c:url value="/Bootstrap/css/grafica.css"/>" rel="stylesheet">
-<script src="<c:url value="/Bootstrap/js/Upload.js"/>"></script>   
 <script type="text/javascript">
             function validate(form){
                 
@@ -56,8 +54,9 @@
                     $( "#select_image" ).click(function() {
                             $( "#form_div" ).hide();
                             $( "#image_div").show();
-                    return false;});
+                    return false;
                     });
+                });
                 
                 function changeImage(image_name){
                     document.getElementById("image_preview").src = "<c:url value="/Images"/>/" + image_name; 
@@ -67,13 +66,7 @@
                              $( "#form_div" ).show();
                          });
                          return false };
-</script>
-<script>
-            $(document).ready(function(){
-                $(this).Uploader({
-                    url : "<c:url value="/User/Upload"/>"
-                });
-            });
+                     
 </script>
         <title>Nuovo prodotto</title>
     </head>
@@ -188,42 +181,13 @@
             </form>
         </div>
                          <%-- Inizio secondo div --%>
-                         
-    <div  id="image_div" class="hide">
-    <h4>Fai l'upload delle tue immagini</h4>  
-        <div class="container pull-left">
-            <span id="btn" class="btn btn-success fileinput-button">
-                    <i class="icon-plus icon-white"></i>
-                    <span id="toni">Aggiungi file</span>
-                    <input id="input_file" type="file" name="files" multiple>
-                </span>
-                <button id="upload_all" class="btn btn-primary">Upload all </button>
-                <button id="remove_all" class="btn btn-warning">Remove all </button>
-        </div>
-
-        <div class="container span14">
-        <table class="table" id="upload_table">
-            <thead>
-                <tr>
-                    <th class="span5"></th>
-                    <th class="span2"></th>
-                    <th class="span2"></th>
-                    <th class="span3"></th>
-                    <th class="span1"></th>
-                    <th class="span1"></th>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>    
-        </table>
-        </div>
-    <br><br>
+    <div id="image_div" class="hide">
+        <h4>Seleziona un immagine</h4>  
          <c:forEach items="${requestScope.file_list}" var="file">
              <a href="#" onclick="return changeImage('${file}')">
                  <img src="<c:url value="/Images/${file}"/>" width="150" height="150">
              </a>         
-         </c:forEach> 
-         
-    </div>
+         </c:forEach>                             
+    </div>                                                                     
                          <br><br><br><br>                         
 <jsp:include page="/Jsp/Footer.jsp" flush="false"/>

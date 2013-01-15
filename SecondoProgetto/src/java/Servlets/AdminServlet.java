@@ -57,6 +57,13 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher("/Jsp/AdminPages/EndedAuctionsPage.jsp").forward(request, response);
         }  
         
+        else if(op.equals(topUsersPattern))     
+        {
+        request.setAttribute("buyers", DBManager.queryAdminTopBuyer());
+        request.setAttribute("sellers",DBManager.queryAdminTopSeller());
+        request.getRequestDispatcher("/Jsp/AdminPages/TopUsersPage.jsp").forward(request, response);
+        }  
+        
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
