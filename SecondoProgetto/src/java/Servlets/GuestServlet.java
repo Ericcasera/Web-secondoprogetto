@@ -6,6 +6,7 @@ package Servlets;
 
 import Beans.User;
 import Managers.DBManager;
+import Managers.EmailManager;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpSession;
 public class GuestServlet extends HttpServlet {
     
     private DBManager DBManager;
+    private EmailManager Email;
     private String contextPath;
     private static String loginConfirmPattern =  "loginCon";
     private static String loginRequestPattern =  "loginReq";
@@ -32,7 +34,8 @@ public class GuestServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
             DBManager = (DBManager)super.getServletContext().getAttribute("DbManager");
-            contextPath = this.getServletContext().getContextPath();          
+            contextPath = this.getServletContext().getContextPath(); 
+            Email = (EmailManager)super.getServletContext().getAttribute("EmailManager");
         }        
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
@@ -96,12 +99,12 @@ public class GuestServlet extends HttpServlet {
             
             String password = DBManager.recoverPassword(username, email);
             
-            //Send email
-            
             if(password != null)
             {
+                
                 String message = "Riceverai a breve una mail con la password";
-                response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=0");   
+                response.sendRedirect(contextPath + "/GuestController?op=loginReq&message="+message+"&type=0");
+                Email.RecPasswordEmail(email,password);
             }
             else
             {

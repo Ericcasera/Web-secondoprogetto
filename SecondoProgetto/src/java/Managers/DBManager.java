@@ -917,12 +917,13 @@ public class DBManager {
             Auction auction;
             ArrayList list = new ArrayList(20);
 
-            String query = "Select * from active_auctions where seller_id = ? order by end_date";
+            String query = "Select * from active_auctions where seller_id = ? and end_date > ? order by end_date";
               
             try {     
             stm = con.prepareStatement(query);
             
             stm.setInt(1, user_id);
+            stm.setTimestamp(2, new Timestamp(Calendar.getInstance().getTimeInMillis()));
             
             rs = stm.executeQuery();
             
@@ -966,7 +967,7 @@ public class DBManager {
             Auction tmp;
             ArrayList list = new ArrayList(20);
 
-            String query = "Select * from users_offers natural join ACTIVE_AUCTIONS where user_id = ? and end_date > ? order by end_date";
+            String query = "Select distinct * from auto_increment_offers natural join ACTIVE_AUCTIONS where user_id = ? and end_date > ? order by end_date";
               
             try {     
             stm = con.prepareStatement(query);
@@ -1070,7 +1071,7 @@ public class DBManager {
 
             String query = "Select * "
                     + " from ENDED_AUCTIONS join users on seller_id = user_id "
-                    + " where auction_id in ("
+                    + " where end_date < ? and auction_id in ("
                     + " (Select distinct auction_id from AUTO_INCREMENT_OFFERS where user_id = ?)"
                     + " except "
                     + " (Select auction_id from SALES where buyer_id = ?)"
@@ -1079,8 +1080,9 @@ public class DBManager {
             try {     
             stm = con.prepareStatement(query);
             
-            stm.setInt(1, user_id);
             stm.setInt(2, user_id);
+            stm.setInt(3, user_id);
+            stm.setTimestamp(1, new Timestamp(Calendar.getInstance().getTimeInMillis()));
             
             rs = stm.executeQuery();
             
@@ -1430,4 +1432,55 @@ public class DBManager {
             return list;
     }
     
+     
+     public ArrayList queryBuyers(Auction auction){
+        
+            PreparedStatement stm = null ;
+            ResultSet rs = null;
+            ArrayList list = new ArrayList(25);
+            User user;
+
+            String query = "select distinct u.*  "
+                    +         "from ended_auctions a join auto_increment_offers o on a.AUCTION_ID=o.AUCTION_ID "
+                    + "                              join users u on u.USER_ID=o.USER_ID  "
+                    + "           where a.AUCTION_ID= ?";
+              
+            try {     
+            stm = con.prepareStatement(query);
+            
+            stm.setInt(1, auction.getAuction_id());
+            
+            rs = stm.executeQuery();
+            
+            while(rs.next())
+                {
+                    user = new User();
+                    user.setUsername(rs.getString("username"));
+                    user.setRole(rs.getInt("role"));
+                    user.setPhone(rs.getString("phone"));
+                    user.setPassword(rs.getString("password"));
+                    user.setId(rs.getInt("user_id"));
+                    user.setEmail(rs.getString("email"));
+                    user.setCountry(rs.getString("country"));
+                    user.setCity(rs.getString("city"));
+                    user.setAddress(rs.getString("address"));
+                    list.add(user);
+                }
+            rs.close(); 
+
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+        }
+        finally {
+                try{          
+                   stm.close();  
+                 }
+                 catch (Exception ex) {
+                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
+                 }
+            }
+            
+            return list;
+    }
+     
 }

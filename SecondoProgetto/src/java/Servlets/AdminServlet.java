@@ -5,6 +5,8 @@
 package Servlets;
 
 import Managers.DBManager;
+import Managers.EmailManager;
+import Beans.Auction;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 public class AdminServlet extends HttpServlet {
     
     private DBManager DBManager;
+    private EmailManager Email;
+    
     private static String topUsersPattern =  "top";
     private static String cancelAuctionPattern =  "cancel";
     private static String endedAuctionsPattern =  "ended";   
@@ -25,7 +29,8 @@ public class AdminServlet extends HttpServlet {
     
     @Override
     public void init() throws ServletException {
-            DBManager = (DBManager)super.getServletContext().getAttribute("DbManager");        
+            DBManager = (DBManager)super.getServletContext().getAttribute("DbManager"); 
+            Email = (EmailManager)super.getServletContext().getAttribute("EmailManager");
         }   
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -40,6 +45,7 @@ public class AdminServlet extends HttpServlet {
         else if(op.equals(cancelAuctionPattern))     
         {
         String message = request.getParameter("message");
+        
         int id = -1;
         try{
          id = Integer.parseInt(request.getParameter("prod_id"));
@@ -48,6 +54,9 @@ public class AdminServlet extends HttpServlet {
         }
         
         DBManager.queryAdminCancelAuction(id);
+        Auction auction = DBManager.queryAuctionDetails(id);
+        Email.DelAstaEmail(DBManager.queryBuyers(auction), DBManager.getUser(auction.getSeller().getId()), message, auction);
+        
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + id); 
         }
         
@@ -64,6 +73,10 @@ public class AdminServlet extends HttpServlet {
         request.getRequestDispatcher("/Jsp/AdminPages/TopUsersPage.jsp").forward(request, response);
         }  
         
+        else if(op.equals(excelPattern))     
+        {
+           Email.GenExcel(DBManager.queryAdminEndedAuctions(), response);
+        }  
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

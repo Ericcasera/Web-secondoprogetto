@@ -7,7 +7,7 @@
     </head>
 
     <jsp:include page="/Jsp/Body.jsp" flush="false"/>
-    <h5 style="text-align: center"><a href="ciao">Scarica excel della tabella</a></h5>  
+    <h5 style="text-align: center"><a href="<c:url value="/Admin/AdminController?op=excel"/>">Scarica excel della tabella</a></h5>  
 <table class="table">
     <thead>
         <tr>

@@ -66,7 +66,9 @@ public class DBChecker implements Runnable {
                 sale.setAuction_id(auction.getAuction_id());
                 sale.setCancelled(true);
                 sale.setSeller_id(auction.getSeller().getId());
-                DBManager.saveEndedAuction(sale);                
+                DBManager.saveEndedAuction(sale);
+                
+                
             }
             else if(auction.getCurrent_price() <= auction.getMin_price() || auction.getBuyer().getId() == -1){
                 
@@ -78,11 +80,7 @@ public class DBChecker implements Runnable {
                 seller = DBManager.getUser(auction.getSeller().getId());
                 
                 DBManager.saveEndedAuction(sale);
-                logger.log(Level.SEVERE , "Commisions : {0}" , sale.getRetreat_commissions());             
-                logger.log(Level.SEVERE , "auction_id : {0}" , sale.getAuction_id());
-                logger.log(Level.SEVERE , "Seller : {0}" , sale.getSeller_id());
-                logger.log(Level.SEVERE, "---------------------------------------------------------------------");
-                Email.sendEmail(seller, auction);
+                Email.AnnullamentoAstaEmail(seller, auction);
                 
             }
             else
@@ -111,11 +109,11 @@ public class DBChecker implements Runnable {
             
                 seller = DBManager.getUser(auction.getSeller().getId());
                 buyer  = DBManager.getUser(auction.getBuyer().getId());
+              
                 
                 DBManager.saveEndedAuction(sale);
                 
-                Email.sendEmail(seller, auction);
-                Email.sendEmail(buyer, auction);
+                Email.SoldEmail(buyer, seller, sale, auction.getName());
             }
               
             }
