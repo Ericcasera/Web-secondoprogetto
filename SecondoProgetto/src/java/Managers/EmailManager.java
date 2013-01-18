@@ -6,9 +6,6 @@ package Managers;
 import Beans.Auction;
 import Beans.Sale;
 import Beans.User;
-import jxl.CellView;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,8 +23,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+import jxl.CellView;
 import jxl.Workbook;
 import jxl.format.Alignment;
+import jxl.format.BorderLineStyle;
 import jxl.format.Colour;
 import jxl.write.Label;
 import jxl.write.WritableCellFormat;
@@ -41,9 +40,9 @@ public class EmailManager {
     final boolean Gmail = true;   
     
     public Session ConnectEmail(){
-       if(Gmail)
+       /*if(Gmail)
        {
-                    //connessione
+           //connessione*/
            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
            final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
            Properties props = System.getProperties();
@@ -58,13 +57,12 @@ public class EmailManager {
            final String username = "secondoprogettoweb@gmail.com";
            final String password = "secondopro";
            Session session = Session.getDefaultInstance(props, new Authenticator(){
+               @Override
                protected PasswordAuthentication getPasswordAuthentication() {
                     return new PasswordAuthentication(username, password);
-                    }   
-               }                                        );
-     
+                    }});
          return session;
-       }
+       /*}
      
        else
        {
@@ -86,37 +84,12 @@ public class EmailManager {
           };
          Session session = Session.getInstance(props,auth);
          return session;
-       }
+       }*/
     }
-    
    
     public void RecPasswordEmail(String email,String pass){
         try {
 
-        
-            /*//connessione
-             * Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-             * final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-             * // Get a Properties object
-             * Properties props = System.getProperties();
-             * props.setProperty("mail.smtp.host", "smtp.gmail.com");
-             * props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-             * props.setProperty("mail.smtp.socketFactory.fallback", "false");
-             * props.setProperty("mail.smtp.port", "465");
-             * props.setProperty("mail.smtp.socketFactory.port", "465");
-             * props.put("mail.smtp.auth", "true");
-             * props.put( "mail.debug", "true" );
-             * 
-             * 
-             * final String username = "secondoprogettoweb@gmail.com";
-             * final String password = "secondopro";
-             * Session session = Session.getDefaultInstance(props, new Authenticator(){
-             * protected PasswordAuthentication getPasswordAuthentication() {
-             * return new PasswordAuthentication(username, password);
-             * }
-             * }                                        );*/
-            
-           
            Message msg = new MimeMessage(ConnectEmail());
            InternetAddress from = new InternetAddress("Asta");
            msg.setFrom(from);
@@ -139,28 +112,7 @@ public class EmailManager {
             
            User buyer;
            Iterator iter = buyer_list.iterator(); 
-        
-           /*//connessione
-            * Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-            * final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-            * // Get a Properties object
-            * Properties props = System.getProperties();
-            * props.setProperty("mail.smtp.host", "smtp.gmail.com");
-            * props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-            * props.setProperty("mail.smtp.socketFactory.fallback", "false");
-            * props.setProperty("mail.smtp.port", "465");
-            * props.setProperty("mail.smtp.socketFactory.port", "465");
-            * props.put("mail.smtp.auth", "true");
-            * props.put( "mail.debug", "true" );
-            * 
-            * 
-            * final String username = "secondoprogettoweb@gmail.com";
-            * final String password = "secondopro";
-            * Session session = Session.getDefaultInstance(props, new Authenticator(){
-            * protected PasswordAuthentication getPasswordAuthentication() {
-            * return new PasswordAuthentication(username, password);
-            * }
-            * }                                        );*/
+
            Session session = ConnectEmail(); 
            Message msg = new MimeMessage(session);
            
@@ -194,49 +146,23 @@ public class EmailManager {
     
     public void SoldEmail(User buyer, User seller, Sale sale,String auction_name){
     try {
-        /*//connessione
-         * Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-         * final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-         * // Get a Properties object
-         * Properties props = System.getProperties();
-         * props.setProperty("mail.smtp.host", "smtp.gmail.com");
-         * props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-         * props.setProperty("mail.smtp.socketFactory.fallback", "false");
-         * props.setProperty("mail.smtp.port", "465");
-         * props.setProperty("mail.smtp.socketFactory.port", "465");
-         * props.put("mail.smtp.auth", "true");
-         * props.put( "mail.debug", "true" );
-         * 
-         * 
-         * final String username = "secondoprogettoweb@gmail.com";
-         * final String password = "secondopro";
-         * Session session = Session.getDefaultInstance(props, new Authenticator(){
-         * protected PasswordAuthentication getPasswordAuthentication() {
-         * return new PasswordAuthentication(username, password);
-         * }
-         * }                                        );*/
-            
+
            Session session =  ConnectEmail(); 
-           Message msg = new MimeMessage(session);
-           InternetAddress from = new InternetAddress("Asta");
+           Message msg = new MimeMessage(session);InternetAddress from = new InternetAddress("Asta");
            msg.setFrom(from);
-           msg.setRecipients(Message.RecipientType.TO,
-           InternetAddress.parse(buyer.getEmail(),false));
+           msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(buyer.getEmail(),false));
            msg.setSubject("Aggiudicazione Asta");
            msg.setText("Ti sei aggiudicato l'asta contenente " +auction_name + ", venduta da " +seller.getUsername() +"\nA breve l'importo di "+sale.getPrice()+"$ verrà prelevato dal tuo conto corrente\n\n\nCordiali Saluti.\nTrento Aste SpA.,\nLeader nella distibuzione agroalimentare bellica contrattuale nel mondo\n\n\nIl messaggio è stato generato automaticamente");
            msg.setSentDate(new Date());
            Transport.send(msg);
            
            msg.setFrom(from);
-           msg.setRecipients(Message.RecipientType.TO,
-           InternetAddress.parse(seller.getEmail(),false));
+           msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(seller.getEmail(),false));
            msg.setSubject("Asta Terminata");
            msg.setText("La sua asta composta da " +auction_name + ", si è conclusa con la vincita di " +buyer.getUsername() +".\nA breve le sarà corrisposto sul suo conto un importo pari a "+sale.getPrice()+"\n\n\nCordiali Saluti.\nTrento Aste SpA.,\nLeader nella distibuzione agroalimentare bellica contrattuale nel mondo\n\n\nIl messaggio è stato generato automaticamente");
            msg.setSentDate(new Date());
            Transport.send(msg); 
-            
-            
-          
+    
         } catch (MessagingException ex) {
             Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -247,42 +173,17 @@ public class EmailManager {
     
     
     public void AnnullamentoAstaEmail(User seller, Auction auction){
-        try {
-            /*//connessione
-             * Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-             * final String SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
-             * Properties props = System.getProperties();
-             * props.setProperty("mail.smtp.host", "smtp.gmail.com");
-             * props.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
-             * props.setProperty("mail.smtp.socketFactory.fallback", "false");
-             * props.setProperty("mail.smtp.port", "465");
-             * props.setProperty("mail.smtp.socketFactory.port", "465");
-             * props.put("mail.smtp.auth", "true");
-             * props.put( "mail.debug", "true" );
-             * 
-             * 
-             * final String username = "secondoprogettoweb@gmail.com";
-             * final String password = "secondopro";
-             * Session session = Session.getDefaultInstance(props, new Authenticator(){
-             * protected PasswordAuthentication getPasswordAuthentication() {
-             * return new PasswordAuthentication(username, password);
-             * }
-             * }                                        );*/
-            
-        
+        try {        
            Message msg = new MimeMessage(ConnectEmail());
            
            InternetAddress from = new InternetAddress("Asta");
            msg.setFrom(from);
-           msg.setRecipients(Message.RecipientType.TO,
-           InternetAddress.parse(seller.getEmail(),false));
+           msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(seller.getEmail(),false));
            msg.setSubject("Annullamento Asta");
            msg.setText("Asta "+ auction.getName() +" ritirata perchè il prezzo ("+ auction.getCurrent_price() +"$) non ha raggiunto il prezzo minimo ("+ auction.getMin_price() +"$)\n\n\nCordiali Saluti.\nTrento Aste SpA.,\nLeader nella distibuzione agroalimentare bellica contrattuale nel mondo\n\n\nIl messaggio è stato generato automaticamente");
            msg.setSentDate(new Date());
            Transport.send(msg);
-            
-            
-          
+     
         } catch (MessagingException ex) {
             Logger.getLogger(EmailManager.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -304,59 +205,64 @@ public class EmailManager {
             WritableWorkbook w = Workbook.createWorkbook(response.getOutputStream());
             WritableSheet s = w.createSheet("Commissioni", 0);
             
-            WritableFont formato = new WritableFont(WritableFont.ARIAL);
-            WritableFont formato1 = new WritableFont(WritableFont.ARIAL);
-            formato.setPointSize(12);
-            formato1.setPointSize(10);
+            WritableFont formato = new WritableFont(WritableFont.ARIAL , 10 , WritableFont.BOLD);
+            WritableFont formato1 = new WritableFont(WritableFont.ARIAL , 10);
             WritableCellFormat titolo = new WritableCellFormat (formato);
             WritableCellFormat corpo = new WritableCellFormat (formato1);
             
             titolo.setBackground(Colour.AQUA);
             titolo.setAlignment(Alignment.CENTRE);
-
+            titolo.setBorder(jxl.format.Border.ALL, BorderLineStyle.MEDIUM);
+            
             corpo.setAlignment(Alignment.CENTRE);
-            for(int x=0;x<6;x++){
+            corpo.setBorder(jxl.format.Border.ALL, BorderLineStyle.THICK);
+            
+            for(int x=0;x<=7;x++){
                 CellView cell=s.getColumnView(x);
                 cell.setAutosize(true);
                 s.setColumnView(x, cell);
             }
             
-            s.addCell(new Label(0, 0, "Auction name", titolo));
-            s.addCell(new Label(1, 0, "Seller name",titolo));
-            s.addCell(new Label(2, 0, "Buyer name",titolo));
-            s.addCell(new Label(3, 0, "Price",titolo));
-            s.addCell(new Label(4, 0, "Commission",titolo));
-            s.addCell(new Label(5, 0, "Date",titolo));
-            s.addCell(new Label(6, 0, "State",titolo));
-            
+            s.addCell(new Label(0, i, "ID", titolo));  
+            s.addCell(new Label(1, i, "Prodotto", titolo));
+            s.addCell(new Label(2, i, "Nome venditore",titolo));
+            s.addCell(new Label(3, i, "Stato",titolo));  
+            s.addCell(new Label(4, i, "Data di vendita ",titolo));
+            s.addCell(new Label(5, i, "Prezzo di vendita",titolo));
+            s.addCell(new Label(6, i, "Commissioni",titolo));
+            s.addCell(new Label(7, i, "Nome compratore",titolo));
+
+            Auction auc;
+            i++;
             
             while(iter.hasNext()){
                 
                 sale = (Sale) iter.next();
-                
-                s.addCell(new Label(0, i, "" + sale.getAuction().getName(),corpo));
-                s.addCell(new Label(1, i, "" + sale.getAuction().getSeller().getUsername(),corpo));
-                s.addCell(new Label(5, i, "" + sale.getAuction().getExpirationDate(),corpo));
+                auc = sale.getAuction();
+                s.addCell(new Label(0, i, "" + auc.getAuction_id(),corpo));     
+                s.addCell(new Label(1, i, "" + auc.getName(),corpo));
+                s.addCell(new Label(2, i, "" + auc.getSeller().getUsername(),corpo));
+                s.addCell(new Label(4, i, "" + auc.getExpirationDate(),corpo));
 
                 if(sale.isCancelled()){
-                    s.addCell(new Label(2, i, "#######",corpo));
-                    s.addCell(new Label(3, i, "#######",corpo));
-                    s.addCell(new Label(4, i, "#######",corpo));
-                    s.addCell(new Label(6, i, "Cancelled",corpo));
+                    s.addCell(new Label(3, i, "Annullata",corpo));
+                    s.addCell(new Label(5, i, "-",corpo));
+                    s.addCell(new Label(6, i, "-",corpo));
+                    s.addCell(new Label(7, i, "-",corpo));
                 }
                 
                 if(sale.isRetreat()){
-                    s.addCell(new Label(2, i, "#######",corpo));
-                    s.addCell(new Label(3, i, "#######",corpo));
-                    s.addCell(new Label(4, i, "" + sale.getRetreat_commissions()+"$",corpo));
-                    s.addCell(new Label(6, i, "Retreat",corpo));
+                    s.addCell(new Label(3, i, "Ritirata",corpo));
+                    s.addCell(new Label(5, i, "-",corpo));
+                    s.addCell(new Label(6, i, "" + sale.getRetreat_commissions()+"$",corpo)); 
+                    s.addCell(new Label(7, i, "-",corpo));
                 }
                 
                 if(sale.isSold()){
-                    s.addCell(new Label(2, i, "" + sale.getAuction().getBuyer().getUsername(),corpo));
-                    s.addCell(new Label(3, i, "" + sale.getPrice()+"$",corpo));
-                    s.addCell(new Label(4, i, "" + sale.getCommissions()+"$",corpo));
-                    s.addCell(new Label(6, i, "Sold",corpo));
+                    s.addCell(new Label(3, i, "Venduta",corpo));
+                    s.addCell(new Label(5, i, "" + sale.getPrice()+"$",corpo));
+                    s.addCell(new Label(6, i, "" + sale.getCommissions()+"$",corpo));
+                    s.addCell(new Label(7, i, "" + auc.getBuyer().getUsername(),corpo));
                 }
                 i++; 
             
