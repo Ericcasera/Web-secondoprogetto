@@ -222,7 +222,7 @@
                                     <span class="label label-info">Asta ritirata</span><br>   
                                 </c:when>   
                                 <c:otherwise>
-                                    <span class="label label-success">Asta venduta</span><br>   
+                                    <span class="label label-success">Asta persa</span><br>   
                                 </c:otherwise>  
                             </c:choose>
                             <c:out value="Venduto da ${auction.seller.username}"/><br>

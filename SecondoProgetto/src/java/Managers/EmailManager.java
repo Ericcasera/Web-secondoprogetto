@@ -107,7 +107,7 @@ public class EmailManager {
 
     }
     
-    public void DelAstaEmail(ArrayList buyer_list  ,User seller, String message, Auction auction){
+    public void DelAstaEmail(ArrayList buyer_list , String message, Auction auction){
     try {
             
            User buyer;
@@ -119,7 +119,7 @@ public class EmailManager {
            InternetAddress from = new InternetAddress("Asta");
            msg.setFrom(from);
            msg.setRecipients(Message.RecipientType.TO,
-           InternetAddress.parse(seller.getEmail(),false));
+           InternetAddress.parse(auction.getSeller().getEmail(),false));
            msg.setSubject("Asta cancellata");
            msg.setText("L'asta "+ auction.getName() +" è stata annullata \n\n"+ message +".\n\n\nCordiali Saluti.\nTrento Aste SpA.,\nLeader nella distibuzione agroalimentare bellica contrattuale nel mondo\n\n\nIl messaggio è stato generato automaticamente");
            msg.setSentDate(new Date());

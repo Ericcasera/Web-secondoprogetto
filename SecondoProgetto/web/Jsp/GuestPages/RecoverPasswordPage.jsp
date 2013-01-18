@@ -10,8 +10,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-        <link href="Bootstrap/css/bootstrap.css" rel="stylesheet">
-        <link href="Bootstrap/css/grafica.css" rel="stylesheet">
+        <link  href="<c:url value="/Bootstrap/css/grafica.css"/>" rel="stylesheet">
+        <link  href="<c:url value="/Bootstrap/css/bootstrap.css"/>" rel="stylesheet">
         <title>Recupero Password</title>
     </head>
     <body>

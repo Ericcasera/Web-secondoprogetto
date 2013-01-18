@@ -46,8 +46,7 @@
                             Prezzo prodotto   : <strong><span class="text-error"> ${auction.current_price}</span>$</strong><br>
                             Prezzo spedizione : <strong><span class="text-error"> ${auction.shipping_price}</span>$</strong><br> 
                             -------------------------------- <br>
-                            Prezzo Totale : <strong><span class="text-error"> ${sale.price}</span>$</strong><br>  
-                            
+                            Prezzo Totale : <strong><span class="text-error"> ${sale.price}</span>$</strong><br>                    
                          </c:otherwise>
                     </c:choose>
                 </td>

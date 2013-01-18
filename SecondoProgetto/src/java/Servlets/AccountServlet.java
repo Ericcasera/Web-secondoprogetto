@@ -49,29 +49,28 @@ public class AccountServlet extends HttpServlet {
         request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response);
         }
         else if(op.equals(activeSellsPattern)){
-            ArrayList list = DBManager.queryUserActiveSells(user_id);
-            request.setAttribute("result", list);
+            request.setAttribute("result", DBManager.queryUserActiveSells(user_id));
             request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response);
         }        
         else if(op.equals(activeBuysPattern)){
-            ArrayList list = DBManager.queryUserActiveBuys(user_id);
-            request.setAttribute("result", list);
+            request.setAttribute("result", DBManager.queryUserActiveBuys(user_id));
             request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
         }
         else if(op.equals(soldPattern)){
-            ArrayList list = DBManager.queryUserEndedAuctions(user_id);
-            request.setAttribute("result", list);
+            request.setAttribute("result", DBManager.queryUserEndedAuctions(user_id));
             request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
         }
         else if(op.equals(wonPattern)){
-            ArrayList list = DBManager.queryUserWonAuctions(user_id);
-            request.setAttribute("result", list);
+            request.setAttribute("result", DBManager.queryUserWonAuctions(user_id));
             request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
         }
         else if(op.equals(lostPattern)){
-            ArrayList list = DBManager.queryUserLostAuctions(user_id);
-            request.setAttribute("result", list);
+            request.setAttribute("result", DBManager.queryUserLostAuctions(user_id));
             request.getRequestDispatcher("/Jsp/UserPages/AccountPage.jsp").forward(request, response); 
+        }
+        else
+        {
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
         }
 
 

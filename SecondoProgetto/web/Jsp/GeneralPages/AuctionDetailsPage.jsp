@@ -72,7 +72,7 @@
 <table>
     <tr>
         <td class="span4">
-        <img src="<c:url value="/Images/${auction.image_url}"/>" width="250px" height="250px"/>
+            <img src="<c:url value="/Images/${auction.image_url}"/>" width="250px" height="250px"/>
         </td>
         <td class="span7">
             <table>
@@ -136,8 +136,7 @@
             </table>
        </td>
     </tr>
-        </tr>
-    </table>
+</table>
         <jsp:include page="/Jsp/Message.jsp" flush="false"/>
         <div id="desc" class="hero-unit">
         <c:if test="${!auction.cancelled}">

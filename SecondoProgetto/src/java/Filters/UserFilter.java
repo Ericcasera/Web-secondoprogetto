@@ -47,9 +47,7 @@ public class UserFilter implements Filter {
             }
             else if(role == 1)
             {  
-             req.setAttribute("URL","/General/GeneralController?op=home");
-             req.setAttribute("Page", "Homepage");
-             req.getRequestDispatcher("/Jsp/ErrorPage.jsp").forward(request, response);  
+                res.sendRedirect(contextPath + "/General/GeneralController?op=home");    
             }
             else
             {

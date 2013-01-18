@@ -66,7 +66,7 @@ public class GeneralServlet extends HttpServlet {
             auction_id = Integer.parseInt(request.getParameter("id"));
    
             }catch(Exception e){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
                 return;
             }
         
@@ -74,10 +74,7 @@ public class GeneralServlet extends HttpServlet {
         
             if(auction == null)
             {
-             request.setAttribute("URL",  "/General/GeneralController?op=home");
-             request.setAttribute("Page", "Homepage");
-             request.setAttribute("MSG",  "Il prodotto che cerchi non è disponibile");
-             request.getRequestDispatcher("/Jsp/ErrorPage.jsp").forward(request, response);  
+             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
              return;
             }       
             
@@ -92,13 +89,11 @@ public class GeneralServlet extends HttpServlet {
             try{
             auction_id = Integer.parseInt(request.getParameter("id"));
             }catch(Exception e){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+                response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
                 return;
             }
-        
-            ArrayList result = DBManager.queryOffersLog(auction_id);
 
-            request.setAttribute("log", result);
+            request.setAttribute("log", DBManager.queryOffersLog(auction_id));
             request.getRequestDispatcher("/Jsp/GeneralPages/OffersLogPage.jsp").forward(request, response);
         
         }

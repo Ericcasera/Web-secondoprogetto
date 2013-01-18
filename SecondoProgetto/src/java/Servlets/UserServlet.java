@@ -215,7 +215,7 @@ public class UserServlet extends HttpServlet {
         
         else if(op.equals(uploadPagePattern))
         {
-        request.getRequestDispatcher("/Jsp/UserPages/UploadPage.jsp").forward(request, response); 
+            request.getRequestDispatcher("/Jsp/UserPages/UploadPage.jsp").forward(request, response); 
         }      
         else
         {

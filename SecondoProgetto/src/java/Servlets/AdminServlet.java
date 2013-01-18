@@ -7,7 +7,9 @@ package Servlets;
 import Managers.DBManager;
 import Managers.EmailManager;
 import Beans.Auction;
+import Beans.Pair;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +33,8 @@ public class AdminServlet extends HttpServlet {
     public void init() throws ServletException {
             DBManager = (DBManager)super.getServletContext().getAttribute("DbManager"); 
             Email = (EmailManager)super.getServletContext().getAttribute("EmailManager");
-        }   
+        }
+    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
       
@@ -39,10 +42,11 @@ public class AdminServlet extends HttpServlet {
         request.setAttribute("category_list", DBManager.queryCategoryList()); 
         
         if(op == null) {     
-            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");        
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
+            return;
         }
         
-        else if(op.equals(cancelAuctionPattern))     
+        if(op.equals(cancelAuctionPattern))     
         {
         String message = request.getParameter("message");
         
@@ -55,7 +59,7 @@ public class AdminServlet extends HttpServlet {
         
         DBManager.queryAdminCancelAuction(id);
         Auction auction = DBManager.queryAuctionDetails(id);
-        Email.DelAstaEmail(DBManager.queryBuyers(auction), DBManager.getUser(auction.getSeller().getId()), message, auction);
+        Email.DelAstaEmail(DBManager.queryBuyers(auction), message, auction);
         
             response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + id); 
         }
@@ -68,14 +72,20 @@ public class AdminServlet extends HttpServlet {
         
         else if(op.equals(topUsersPattern))     
         {
-        request.setAttribute("buyers", DBManager.queryAdminTopBuyer());
-        request.setAttribute("sellers",DBManager.queryAdminTopSeller());
+        Pair result = DBManager.queryAdminTopUsers();
+        request.setAttribute("buyers", (ArrayList) result.getSecond());
+        request.setAttribute("sellers", (ArrayList) result.getFirst());
         request.getRequestDispatcher("/Jsp/AdminPages/TopUsersPage.jsp").forward(request, response);
         }  
         
         else if(op.equals(excelPattern))     
         {
            Email.GenExcel(DBManager.queryAdminEndedAuctions(), response);
+        }  
+        
+        else    
+        {
+            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=home");
         }  
     }
 

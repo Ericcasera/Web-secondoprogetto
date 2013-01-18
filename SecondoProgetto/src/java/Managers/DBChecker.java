@@ -57,10 +57,9 @@ public class DBChecker implements Runnable {
                 sale.setAuction_id(auction.getAuction_id());
                 sale.setCancelled(true);
                 sale.setSeller_id(auction.getSeller().getId());
-                DBManager.saveEndedAuction(sale);
-                
-                
+                DBManager.saveEndedAuction(sale);  
             }
+            
             else if(auction.getCurrent_price() <= auction.getMin_price() || auction.getBuyer().getId() == -1){
                 
                 sale.setAuction_id(auction.getAuction_id());
@@ -109,7 +108,6 @@ public class DBChecker implements Runnable {
               
             }
             
-
             DBManager.deleteEndedAuctions(sell_date);
 
             logger.log(Level.SEVERE, "End database check at {0}" , new Date().toString());

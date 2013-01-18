@@ -23,20 +23,20 @@
                 <strong>${index+1}°</strong>
             </td>
                 <td>
-            <c:if test="${requestScope.buyers[index] != null}">
-                <c:set var="buyer" value="${requestScope.buyers[index]}" />
-                <strong>${buyer.username}</strong>&ensp;[<strong>${buyer.email}</strong>]<br>
-                    Ha vinto <strong><span class="text-error"> ${buyer.auctions_number}</span></strong> aste
-                    per un totale di <strong><span class="text-error"> ${buyer.total_price}</span>$</strong>
-            </c:if>
+                    <c:if test="${requestScope.buyers[index] != null}">
+                        <c:set var="buyer" value="${requestScope.buyers[index]}" />
+                            <strong>${buyer.username}</strong>&ensp;[<strong>${buyer.email}</strong>]<br>
+                            Ha vinto <strong><span class="text-error"> ${buyer.auctions_number}</span></strong> aste
+                            per un totale di <strong><span class="text-error"> ${buyer.total_price}</span>$</strong>
+                    </c:if>
                 </td>    
                 <td>
-            <c:if test="${requestScope.sellers[index] != null}">
-                <c:set var="seller" value="${requestScope.sellers[index]}" />
-                <strong>${seller.username}</strong>&ensp;[<strong>${seller.email}</strong>]<br>
-                    Ha venduto <strong><span class="text-error"> ${seller.auctions_number}</span></strong> aste
-                    per un totale di <strong><span class="text-error"> ${seller.total_price}</span>$</strong>
-            </c:if>
+                    <c:if test="${requestScope.sellers[index] != null}">
+                        <c:set var="seller" value="${requestScope.sellers[index]}" />
+                            <strong>${seller.username}</strong>&ensp;[<strong>${seller.email}</strong>]<br>
+                            Ha venduto <strong><span class="text-error"> ${seller.auctions_number}</span></strong> aste
+                            per un totale di <strong><span class="text-error"> ${seller.total_price}</span>$</strong>
+                    </c:if>
                 </td>
             </tr>
         </c:forEach>

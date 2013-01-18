@@ -1229,20 +1229,27 @@ public class DBManager {
             }
      }
     
-     public ArrayList queryAdminTopSeller(){
+     public Pair queryAdminTopUsers(){
             
-          String query = "Select count(*) as auctions , sum(price) as total , username , email "
+          String querySeller = "Select count(*) as auctions , sum(price) as total , username , email "
                   + " from (sales natural join ENDED_AUCTIONS) join users on seller_id = user_id "
                   + " group by seller_id , username , email "
+                  + " order by total desc FETCH FIRST 10 ROWS ONLY";
+          
+          String queryBuyer = "Select count(*) as auctions , sum(price) as total , username , email "
+                  + " from sales join users on buyer_id = user_id "
+                  + " group by buyer_id , username , email "
                   + " order by total desc FETCH FIRST 10 ROWS ONLY";
             
             PreparedStatement stm = null ;
             ResultSet rs = null;
-            ArrayList list = new ArrayList(15);
+            ArrayList buyers = new ArrayList(15);
+            ArrayList sellers = new ArrayList(15);
             TopUser user = null;
+            Pair pair = new Pair();
             
             try {     
-            stm = con.prepareStatement(query);
+            stm = con.prepareStatement(querySeller);
 
             rs = stm.executeQuery();
             
@@ -1253,11 +1260,28 @@ public class DBManager {
             user.setTotal_price(rs.getFloat("total"));
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
-            list.add(user);
+            buyers.add(user);
+            }
+            rs.close();
+            stm.close();
+            pair.setFirst(buyers);
+            
+            stm = con.prepareStatement(queryBuyer);
+
+            rs = stm.executeQuery();
+            
+            while(rs.next())
+            {
+            user = new TopUser();
+            user.setAuctions_number(rs.getInt("auctions"));
+            user.setTotal_price(rs.getFloat("total"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            sellers.add(user);
             }
             
+            pair.setSecond(sellers);
             
-            rs.close();
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
         }
@@ -1269,52 +1293,9 @@ public class DBManager {
                      Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
                  }
             }        
-            return list;   
+            return pair;   
      }
-    
-     public ArrayList queryAdminTopBuyer(){
-            
-            String query = "Select count(*) as auctions , sum(price) as total , username , email "
-                    + " from sales join users on buyer_id = user_id "
-                    + " group by buyer_id , username , email "
-                    + " order by total desc FETCH FIRST 10 ROWS ONLY";
-            
-            PreparedStatement stm = null ;
-            ResultSet rs = null;
-            ArrayList list = new ArrayList(15);
-            TopUser user = null;
-            
-            try {     
-            stm = con.prepareStatement(query);
-
-            rs = stm.executeQuery();
-            
-            while(rs.next())
-            {
-            user = new TopUser();
-            user.setAuctions_number(rs.getInt("auctions"));
-            user.setTotal_price(rs.getFloat("total"));
-            user.setUsername(rs.getString("username"));
-            user.setEmail(rs.getString("email"));
-            list.add(user);
-            }
-            
-            
-            rs.close();
-        } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
-        }
-        finally {
-                try{     
-                   stm.close();   
-                 }
-                 catch (Exception ex) {
-                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
-                 }
-            }        
-            return list;     
-     }
-     
+         
      public void queryAdminCancelAuction(int id){
             
             String query = "Update active_auctions set cancelled = true where auction_id = ? ";         
@@ -1439,10 +1420,10 @@ public class DBManager {
             ArrayList list = new ArrayList(25);
             User user;
 
-            String query = "select distinct u.*  "
-                    +         "from ended_auctions a join auto_increment_offers o on a.AUCTION_ID=o.AUCTION_ID "
-                    + "                              join users u on u.USER_ID=o.USER_ID  "
-                    + "           where a.AUCTION_ID= ?";
+            String query = "Select distinct u.*  "
+                    + " from ended_auctions natural join auto_increment_offers "
+                    + " natural join users u "
+                    + " where AUCTION_ID = ?";
               
             try {     
             stm = con.prepareStatement(query);
