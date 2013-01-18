@@ -6,6 +6,7 @@ package Managers;
 import Beans.Auction;
 import Beans.Sale;
 import Beans.User;
+import jxl.CellView;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Security;
@@ -26,7 +27,11 @@ import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import jxl.Workbook;
+import jxl.format.Alignment;
+import jxl.format.Colour;
 import jxl.write.Label;
+import jxl.write.WritableCellFormat;
+import jxl.write.WritableFont;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 
@@ -298,20 +303,61 @@ public class EmailManager {
             response.setHeader("Content-Disposition", "attachment; filename=Commissioni.xls");
             WritableWorkbook w = Workbook.createWorkbook(response.getOutputStream());
             WritableSheet s = w.createSheet("Commissioni", 0);
+            
+            WritableFont formato = new WritableFont(WritableFont.ARIAL);
+            WritableFont formato1 = new WritableFont(WritableFont.ARIAL);
+            formato.setPointSize(12);
+            formato1.setPointSize(10);
+            WritableCellFormat titolo = new WritableCellFormat (formato);
+            WritableCellFormat corpo = new WritableCellFormat (formato1);
+            
+            titolo.setBackground(Colour.AQUA);
+            titolo.setAlignment(Alignment.CENTRE);
 
-            s.addCell(new Label(0, 0, "Seller name"));
-            s.addCell(new Label(1, 0, "Sell Date"));
-            s.addCell(new Label(2, 0, "Price"));
-            s.addCell(new Label(3, 0, "Commission"));
+            corpo.setAlignment(Alignment.CENTRE);
+            for(int x=0;x<6;x++){
+                CellView cell=s.getColumnView(x);
+                cell.setAutosize(true);
+                s.setColumnView(x, cell);
+            }
+            
+            s.addCell(new Label(0, 0, "Auction name", titolo));
+            s.addCell(new Label(1, 0, "Seller name",titolo));
+            s.addCell(new Label(2, 0, "Buyer name",titolo));
+            s.addCell(new Label(3, 0, "Price",titolo));
+            s.addCell(new Label(4, 0, "Commission",titolo));
+            s.addCell(new Label(5, 0, "Date",titolo));
+            s.addCell(new Label(6, 0, "State",titolo));
+            
             
             while(iter.hasNext()){
                 
                 sale = (Sale) iter.next();
                 
-                s.addCell(new Label(0, i, "" + sale.getAuction().getSeller().getUsername()));
-                s.addCell(new Label(1, i, "" + sale.getAuction().getExpirationDate()));
-                s.addCell(new Label(2, i, "" + sale.getPrice()+"$"));
-                s.addCell(new Label(3, i, "" + sale.getCommissions()+"$"));
+                s.addCell(new Label(0, i, "" + sale.getAuction().getName(),corpo));
+                s.addCell(new Label(1, i, "" + sale.getAuction().getSeller().getUsername(),corpo));
+                s.addCell(new Label(5, i, "" + sale.getAuction().getExpirationDate(),corpo));
+
+                if(sale.isCancelled()){
+                    s.addCell(new Label(2, i, "#######",corpo));
+                    s.addCell(new Label(3, i, "#######",corpo));
+                    s.addCell(new Label(4, i, "#######",corpo));
+                    s.addCell(new Label(6, i, "Cancelled",corpo));
+                }
+                
+                if(sale.isRetreat()){
+                    s.addCell(new Label(2, i, "#######",corpo));
+                    s.addCell(new Label(3, i, "#######",corpo));
+                    s.addCell(new Label(4, i, "" + sale.getRetreat_commissions()+"$",corpo));
+                    s.addCell(new Label(6, i, "Retreat",corpo));
+                }
+                
+                if(sale.isSold()){
+                    s.addCell(new Label(2, i, "" + sale.getAuction().getBuyer().getUsername(),corpo));
+                    s.addCell(new Label(3, i, "" + sale.getPrice()+"$",corpo));
+                    s.addCell(new Label(4, i, "" + sale.getCommissions()+"$",corpo));
+                    s.addCell(new Label(6, i, "Sold",corpo));
+                }
                 i++; 
             
             } 
