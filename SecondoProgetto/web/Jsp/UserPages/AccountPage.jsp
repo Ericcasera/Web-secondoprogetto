@@ -32,7 +32,7 @@
                 </address>
         </c:when>
         <c:when test="${op == 'sells'}">
-            <h3>Le mie aste attive</h3>
+            <h3>Prodotti in vendita</h3>
             <jsp:include page="/Jsp/Message.jsp" flush="false"/>
             <table class="table">
                 <thead><th class="span3"></th><th class="span3"></th><th></th></thead>
@@ -69,7 +69,7 @@
             </table>        
         </c:when> 
         <c:when test="${op == 'buys'}">
-            <h3>Le mie aste attive</h3>
+            <h3>Aste in corso</h3>
             <table class="table">
                 <thead><th class="span3"></th><th class="span3"></th><th></th></thead>
                 <tbody>
@@ -92,6 +92,21 @@
                             <p>
                             Prezzo corrente   : <strong><span class="text-error"> ${auction.current_price}</span>$</strong><br>
                             Prezzo spedizione : <strong><span class="text-error"> ${auction.shipping_price}</span>$</strong><br>
+                            <c:choose>
+                                <c:when test="${auction.cancelled == true}">
+                                    <span class="text-error">L'asta è annullata</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:choose>
+                                    <c:when test="${auction.buyer.id != -1}">
+                                        <span class="text-success">Attualmente sei il miglior offerente</span>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <span class="text-warning">Attualmente non sei il miglior offerente</span>                                
+                                    </c:otherwise>
+                                    </c:choose>
+                                </c:otherwise>
+                            </c:choose>
                             </p>        
                         </td>
                         <td>
@@ -103,7 +118,7 @@
             </table>        
         </c:when>
         <c:when test="${op == 'won'}">
-            <h3>I miei acquisti passati</h3>
+            <h3>Aste passate vinte</h3>
             <table class="table">
                 <thead><th class="span3"></th><th class="span3"></th><th></th></thead>
                 <tbody>

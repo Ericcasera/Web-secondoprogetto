@@ -52,16 +52,7 @@ public class DBChecker implements Runnable {
             {    
             auction = (Auction) iter.next();
             sale = new Sale();
-            
-            logger.log(Level.SEVERE, "---------------------------------------------------------------------");
-            logger.log(Level.SEVERE , "Auction ID : {0}" , auction.getAuction_id() );
-            logger.log(Level.SEVERE , "Auction NAME : {0}" , auction.getName() );
-            logger.log(Level.SEVERE , "buyer_id  : {0}" , auction.getBuyer().getId());
-            logger.log(Level.SEVERE , "isCanelled : {0}" , auction.isCancelled() );
-            logger.log(Level.SEVERE , "CurrentPrice : {0}" , auction.getCurrent_price());
-            logger.log(Level.SEVERE , "Min price  : {0}" , auction.getMin_price());
 
-                      
             if(auction.isCancelled()){
                 sale.setAuction_id(auction.getAuction_id());
                 sale.setCancelled(true);
@@ -124,7 +115,7 @@ public class DBChecker implements Runnable {
             logger.log(Level.SEVERE, "End database check at {0}" , new Date().toString());
             
             }catch(Exception ex){
-                Logger.getLogger(getClass().getName()).log(Level.SEVERE, null ,ex);
+                logger.log(Level.SEVERE, "End database check at {0}" , new Date().toString());
             }
          }
     

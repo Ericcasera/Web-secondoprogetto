@@ -5,6 +5,7 @@
 package Servlets;
 
 import Beans.Auction;
+import Beans.Pair;
 import Managers.DBManager;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class GeneralServlet extends HttpServlet {
         request.setAttribute("category_list", DBManager.queryCategoryList()); 
         
         if(op == null || op.equals(homepagePattern)) {     
-            request.setAttribute("auctions_list" , DBManager.queryAuctionsSearch(-1, "" , 3 , 0 , 10)); //Primi 10 elementi ordinati per data
+            request.setAttribute("auctions_list" , (ArrayList) (DBManager.queryAuctionsSearch(-1, "" , 3 , 0 , 10)).getSecond()); //Primi 10 elementi ordinati per data
             request.getRequestDispatcher("/Jsp/GeneralPages/Homepage.jsp").forward(request, response);          
         }
               
@@ -50,11 +51,10 @@ public class GeneralServlet extends HttpServlet {
             int page        = Integer.parseInt(request.getParameter("page"));
             int per_page    = Integer.parseInt(request.getParameter("per_page"));
         
-            ArrayList result = DBManager.queryAuctionsSearch(category_id, pattern , order , (page*per_page) , per_page);
-            int  records = DBManager.countAuction(category_id, pattern);
-
-            request.setAttribute("result", records);
-            request.setAttribute("auctions_list", result);
+            Pair result = DBManager.queryAuctionsSearch(category_id, pattern , order , (page*per_page) , per_page);
+            
+            request.setAttribute("result", (Integer) result.getFirst());
+            request.setAttribute("auctions_list", (ArrayList) result.getSecond());
             request.getRequestDispatcher("/Jsp/GeneralPages/SearchPage.jsp").forward(request, response);           
             
         }

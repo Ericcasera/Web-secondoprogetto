@@ -46,6 +46,7 @@
         }
         
         $(function(){
+
         $('#modify_button').click(function(){
             $(this).hide();
             $('#desc p').hide();

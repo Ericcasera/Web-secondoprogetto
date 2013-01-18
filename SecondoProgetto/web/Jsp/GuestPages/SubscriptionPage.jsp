@@ -10,8 +10,8 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
-        <link href="Bootstrap/css/bootstrap.css" rel="stylesheet">
-        <link href="Bootstrap/css/grafica.css" rel="stylesheet">
+        <link  href="<c:url value="/Bootstrap/css/bootstrap.css"/>" rel="stylesheet">
+        <link href="<c:url value="/Bootstrap/css/grafica.css"/>" rel="stylesheet">
         
         <script type="text/javascript">
             function validate(form){
@@ -59,7 +59,7 @@
                     }
                     return true;
                 }
- 
+
         </script>
         
         
@@ -71,33 +71,33 @@
                 <h3> Registrazione nuovo account </h3>
             </div>
             <br>
-            <form action="<c:url value="/GuestController?op=subCon"/>" method="post" onSubmit ="return validate(this); " class="form-horizontal">
+            <form id="my_form"action="<c:url value="/GuestController?op=subCon"/>" method="post" onsubmit="return validate(this);" class="form-horizontal">
 
                   <div class="control-group">
                       <label class="control-label" for="username">*Username</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Username" type="text" name="username">
+                             <input class="input-large" placeholder="Username" type="text" name="username"><br>
                              <span class="text-error" id="username_span"></span>
                          </div>
                   </div> 
                   <div class="control-group">
                       <label class="control-label" for="password">*Password</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Password" type="text" name="password">
+                             <input class="input-large" placeholder="Password" type="text" name="password"><br>
                              <span class="text-error" id="password_span"></span>
                          </div>
                   </div>
                  <div class="control-group">
                       <label class="control-label" for="email">*Email</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Email" type="text" name="email">
+                             <input class="input-large" placeholder="Email" type="text" name="email"><br>
                              <span class="text-error" id="email1_span"></span>
                          </div>
                   </div> 
                  <div class="control-group">
                       <label class="control-label" for="email_repeat">*Verifica email</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Email" type="text" name="email_repeat">
+                             <input class="input-large" placeholder="Email" type="text" name="email_repeat"><br>
                              <span class="text-error" id="email2_span"></span>
                          </div>
                   </div> 
@@ -111,21 +111,21 @@
                   <div class="control-group">
                       <label class="control-label" for="country">*Nazione</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Nazione" type="text" name="country">
+                             <input class="input-large" placeholder="Nazione" type="text" name="country"><br>
                              <span class="text-error" id="country_span"></span>
                          </div>
                   </div>   
                   <div class="control-group">
                       <label class="control-label" for="city">*Città</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Città" type="text" name="city">
+                             <input class="input-large" placeholder="Città" type="text" name="city"><br>
                              <span class="text-error" id="city_span"></span>
                          </div>
                   </div>   
                  <div class="control-group">
                       <label class="control-label" for="address">*Indirizzo</label>
                          <div class="controls">
-                             <input class="input-large" placeholder="Indirizzo" type="text" name="address">
+                             <input class="input-large" placeholder="Indirizzo" type="text" name="address"><br>
                              <span class="text-error" id="address_span"></span>
                          </div>
                   </div>  
