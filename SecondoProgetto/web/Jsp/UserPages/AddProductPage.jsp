@@ -157,7 +157,7 @@
                                     <span class="add-on">$</span> 
                                 </div>
                              <span class="text-error" id="shipping_price_span"></span>
-                             <br><span class="text-info">Se al termine dell'asta il prezzo minimo non è stato raggiunto, l'asta verrà annullata</span>
+                             <br><span class="text-info">Prezzo che verrà aggiunto al prezzo finale </span>
                          </div>
                   </div> 
                  <div class="control-group">
@@ -174,7 +174,7 @@
                   <div class="control-group">
                          <div class="controls">
                              <button class="btn btn-primary" type="submit">Invia richiesta</button>
-                             <a class="btn" href="<c:url value="/User/UserController?op=home"/>">Annulla</a>
+                             <a class="btn btn-warning" href="<c:url value="/User/UserController?op=home"/>">Annulla</a>
                              <span class="text-error" id="final_span"></span>
                          </div>
                   </div>                  

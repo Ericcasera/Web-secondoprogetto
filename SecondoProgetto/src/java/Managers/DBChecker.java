@@ -32,7 +32,7 @@ public class DBChecker implements Runnable {
          }
      
     @Override
-     public void run() {
+     public void run() { //Medoto schedulato ogni minuto
         
             ArrayList auction_list ;
             User seller , buyer;
@@ -43,7 +43,7 @@ public class DBChecker implements Runnable {
             try{
 
             sell_date = new Timestamp(Calendar.getInstance().getTimeInMillis());
-            auction_list = DBManager.queryEndedAuctions(sell_date);
+            auction_list = DBManager.queryEndedAuctions(sell_date); //Ottiene tutti le aste terminate
             Iterator iter = auction_list.iterator();
 
             logger.log(Level.SEVERE, "Start database check at {0}" , new Date().toString());
@@ -53,7 +53,8 @@ public class DBChecker implements Runnable {
             auction = (Auction) iter.next();
             sale = new Sale();
 
-            if(auction.isCancelled()){
+            //Per ogni asta prepara l'oggetto sale con relativi attributi, invia le mail o lo salva su database
+            if(auction.isCancelled()){ //Caso asta cancellata
                 sale.setAuction_id(auction.getAuction_id());
                 sale.setCancelled(true);
                 sale.setSeller_id(auction.getSeller().getId());
@@ -61,7 +62,7 @@ public class DBChecker implements Runnable {
             }
             
             else if(auction.getCurrent_price() <= auction.getMin_price() || auction.getBuyer().getId() == -1){
-                
+            //Caso asta che non raggiunge il prezzo minimo oppure che non ha offerte    
                 sale.setAuction_id(auction.getAuction_id());
                 sale.setRetreat(true);
                 sale.setRetreat_commissions((float) 1.23);
@@ -70,11 +71,11 @@ public class DBChecker implements Runnable {
                 seller = DBManager.getUser(auction.getSeller().getId());
                 
                 DBManager.saveEndedAuction(sale);
-                Email.AnnullamentoAstaEmail(seller, auction);
+                Email.AuctionRetreatEmail(seller, auction);
                 
             }
             else
-            {
+            {//Caso asta venduta con successo
                 sale.setAuction_id(auction.getAuction_id());
                 sale.setSold(true);
                 sale.setSeller_id(auction.getSeller().getId());
@@ -107,7 +108,7 @@ public class DBChecker implements Runnable {
             }
               
             }
-            
+            //finita l'iterazione cancella tutte le aste finite della tabella delle aste attive
             DBManager.deleteEndedAuctions(sell_date);
 
             logger.log(Level.SEVERE, "End database check at {0}" , new Date().toString());

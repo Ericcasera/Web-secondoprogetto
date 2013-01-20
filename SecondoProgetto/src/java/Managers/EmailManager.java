@@ -38,6 +38,8 @@ import jxl.write.WritableWorkbook;
 
 public class EmailManager {
     final boolean Gmail = true;   
+    final String username = "secondoprogettoweb@gmail.com";
+    final String password = "secondopro";
     
     public Session ConnectEmail(){
        /*if(Gmail)
@@ -53,9 +55,7 @@ public class EmailManager {
            props.setProperty("mail.smtp.socketFactory.port", "465");
            props.put("mail.smtp.auth", "true");
            props.put( "mail.debug", "true" ); 
-           
-           final String username = "secondoprogettoweb@gmail.com";
-           final String password = "secondopro";
+
            Session session = Session.getDefaultInstance(props, new Authenticator(){
                @Override
                protected PasswordAuthentication getPasswordAuthentication() {
@@ -91,7 +91,7 @@ public class EmailManager {
         try {
 
            Message msg = new MimeMessage(ConnectEmail());
-           InternetAddress from = new InternetAddress("Asta");
+           InternetAddress from = new InternetAddress(username + "");
            msg.setFrom(from);
            msg.setRecipients(Message.RecipientType.TO,
            InternetAddress.parse(email,false));
@@ -107,7 +107,7 @@ public class EmailManager {
 
     }
     
-    public void DelAstaEmail(ArrayList buyer_list , String message, Auction auction){
+    public void AuctionCancelMail(ArrayList buyer_list , String message, Auction auction){
     try {
             
            User buyer;
@@ -116,7 +116,7 @@ public class EmailManager {
            Session session = ConnectEmail(); 
            Message msg = new MimeMessage(session);
            
-           InternetAddress from = new InternetAddress("Asta");
+           InternetAddress from = new InternetAddress(username + "");
            msg.setFrom(from);
            msg.setRecipients(Message.RecipientType.TO,
            InternetAddress.parse(auction.getSeller().getEmail(),false));
@@ -126,6 +126,7 @@ public class EmailManager {
            Transport.send(msg);
            
            while (iter.hasNext()){
+                msg = new MimeMessage(session);
                 buyer = (User) iter.next();
                 msg.setFrom(from);
                 msg.setRecipients(Message.RecipientType.TO,
@@ -148,7 +149,8 @@ public class EmailManager {
     try {
 
            Session session =  ConnectEmail(); 
-           Message msg = new MimeMessage(session);InternetAddress from = new InternetAddress("Asta");
+           Message msg = new MimeMessage(session);
+           InternetAddress from = new InternetAddress(username + "");
            msg.setFrom(from);
            msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(buyer.getEmail(),false));
            msg.setSubject("Aggiudicazione Asta");
@@ -172,11 +174,11 @@ public class EmailManager {
     
     
     
-    public void AnnullamentoAstaEmail(User seller, Auction auction){
+    public void AuctionRetreatEmail(User seller, Auction auction){
         try {        
            Message msg = new MimeMessage(ConnectEmail());
            
-           InternetAddress from = new InternetAddress("Asta");
+           InternetAddress from = new InternetAddress(username + "");
            msg.setFrom(from);
            msg.setRecipients(Message.RecipientType.TO,InternetAddress.parse(seller.getEmail(),false));
            msg.setSubject("Annullamento Asta");

@@ -34,8 +34,8 @@
                   </div>              
                   <div class="control-group">
                          <div class="controls">
-                             <button class="btn" type="submit">Invia richiesta</button>
-                             <a class="btn" href="<c:url value="/GuestController?op=loginReq"/>">Annulla</a>
+                             <button class="btn btn-primary" type="submit">Invia richiesta</button>
+                             <a class="btn btn-warning" href="<c:url value="/GuestController?op=loginReq"/>">Annulla</a>
                          </div>
                   </div>                 
             </form>

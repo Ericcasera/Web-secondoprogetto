@@ -190,7 +190,7 @@
                             Prezzo prodotto   : <strong><span class="text-error"> ${auction.current_price}</span>$</strong><br>
                             Prezzo spedizione : <strong><span class="text-error"> ${auction.shipping_price}</span>$</strong><br> 
                             -------------------------------- <br>
-                            Commissioni :&ensp;<strong><span class="text-error">${sale.retreat_commissions}</span>$</strong><br>
+                            Commissioni :&ensp;<strong><span class="text-error">${sale.commissions}</span>$</strong><br>
                             Prezzo Totale : <strong><span class="text-error"> ${sale.price}</span>$</strong><br>
                             </p>  
                         </td>

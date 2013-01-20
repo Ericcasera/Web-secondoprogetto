@@ -31,7 +31,7 @@ public class DBManager {
     private transient Connection con;
     private ServletContext context;
  
-    // <editor-fold defaultstate="collapsed" desc="DbManager methods. Click on the + sign on the left to edit the code.">    
+
     public DBManager(String dburl , String driver , ServletContext context){
                 try {
                     
@@ -51,7 +51,7 @@ public class DBManager {
             catch (Exception ex){
             }
           } 
-    
+    //Autenticazione dell'utente
     public User Autentication(String username , String password){
             String query = "Select * from users where username = ? and password = ? ";
             PreparedStatement stm = null ;
@@ -92,7 +92,7 @@ public class DBManager {
         return null;
      
      }
-    
+    //Iscrizione nuovo account , se lo username è duplicato ritorna false
     public boolean newAccountSubscription(User tmp){
         
             String query = "Insert into users (username , password , role , email , country , city , address , phone , creation_date)" 
@@ -129,7 +129,7 @@ public class DBManager {
             }  
         return false;
     }
-    
+    //Ritorna la password per un certo username e email 
     public String recoverPassword(String username , String email){
             String query = "Select * from users where username = ? and email = ?";
             
@@ -158,7 +158,7 @@ public class DBManager {
             }  
         return null;
     } 
-      
+    //Ritorna la lista delle categorie  
     public ArrayList queryCategoryList(){
     
             String query = "Select * from category order by category_name";
@@ -194,7 +194,7 @@ public class DBManager {
             
         return lista;
     }
-    
+    //Aggiunge una nuova asta nella tabella delle aste attive , un trigger sul database si occuperà a copiarla tra le aste finite
     public boolean addNewAuction(Auction auction){
             String query = "Insert into active_auctions (seller_id , category_id , starting_price , price_increment , current_price , "
                     + "min_price , image_url , shipping_price , start_date , end_date , auction_name , description) values"
@@ -245,7 +245,7 @@ public class DBManager {
             
         return true;
      }
-     
+    //Ritorna una coppia contenete a)Il numero dei record trovati , b) la lista dei record per una determinata pagina 
     public Pair queryAuctionsSearch(int category_id , String pattern , int order , int offset , int per_page){
         
             String query;
@@ -282,7 +282,7 @@ public class DBManager {
             }
               
             try {     
-            stm = con.prepareCall(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+            stm = con.prepareCall(query);
             String match_pattern = "%" + pattern + "%";
             stm.setString(1, match_pattern);
             stm.setString(2, match_pattern);
@@ -293,16 +293,7 @@ public class DBManager {
             stm.setInt(4, category_id);
             }
 
-            rs = stm.executeQuery();
-            
-            int rows = 0;
-            
-            if(rs.last()){
-                rows= rs.getRow(); 
-                rs.beforeFirst();
-            }
-            
-            pair.setFirst(rows);
+            rs = stm.executeQuery();           
             
             while(rs.next())
                 {
@@ -319,6 +310,37 @@ public class DBManager {
                 }
             rs.close(); 
             pair.setSecond(list);
+            
+            if(category_id == -1)
+            {
+            query = "Select count(*) as records "
+                    + " from active_auctions "
+                    + " where (auction_name like ? OR description like ?) and end_date > ? "; 
+            }
+            else
+            {
+            query = "Select count(*) as records "
+                    + " from active_auctions "
+                    + " where (auction_name like ? OR description like ?) and end_date > ? and category_id = ? ";
+            }
+    
+            stm = con.prepareStatement(query);
+            stm.setString(1, match_pattern);
+            stm.setString(2, match_pattern);
+            stm.setTimestamp(3, new Timestamp(Calendar.getInstance().getTimeInMillis()));
+            
+            if(category_id != -1)
+            {
+            stm.setInt(4, category_id);
+            }
+            
+            rs = stm.executeQuery();
+            
+            rs.next();
+            
+            pair.setFirst(rs.getInt("records"));
+            
+            
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null , ex);
         }
@@ -333,7 +355,7 @@ public class DBManager {
             
         return pair;
     } 
-      
+    //Ritorna i dettagli di un asta , compreso il numero delle offerte , l'offerente in testa al momento e il venditore  
     public Auction queryAuctionDetails(int auction_id){
         
             PreparedStatement stm = null ;
@@ -431,7 +453,7 @@ public class DBManager {
             
             return tmp_auction;
     } 
-    
+    //Inserisce una nuova offerta massima per un utente , dopo che la inserita chiama il metodo updateOffers che si occupa degli autoincrementi 
     public synchronized boolean addNewOffer(int auction_id , float offer , int user_id , float increment , float base_price){
             if(!checkAuctionDate(auction_id))
             {
@@ -494,7 +516,7 @@ public class DBManager {
             
         return true;
      }
-    
+   //Metodo che esegue gli autoincrementi
     private synchronized void updateOffers(int auction_id , float increment , float base_price){
          
             String checkQuery = "Select user_id , max_price from users_offers where auction_id = ? order by max_price desc";
@@ -525,17 +547,17 @@ public class DBManager {
                       
             rs.next();
             
-            first_price = rs.getFloat("max_price");
+            first_price = rs.getFloat("max_price"); //Ottengo il prezzo massimo corrente e relativo user_id
             first_id = rs.getInt("user_id");
             
             if(rs.next()){
-            second_price = rs.getFloat("max_price");
+            second_price = rs.getFloat("max_price"); //Se esiste ottengo il secondo prezzo massimo con relativo user_id
             second_id = rs.getInt("user_id");
             }
             
             rs.close();
             
-            if(second_price == -1 || second_price == base_price) 
+            if(second_price == -1 || second_price == base_price) //Se non esiste un secondo massimo allora faccio solo un offerta 
             {
             sum = base_price + increment;
             insertStm.setInt(1, auction_id);
@@ -544,7 +566,7 @@ public class DBManager {
             insertStm.setTimestamp(4, new Timestamp(Calendar.getInstance().getTimeInMillis()));  
             insertStm.executeUpdate();
             }
-            else if(second_price - increment == base_price)
+            else if(second_price - increment == base_price) //vari controlli per elaborare l'offerta
             {
                 sum = second_price + increment;
                 
@@ -613,7 +635,7 @@ public class DBManager {
   
     
      }
-     
+    //Semplice metodo che ritorna se una asta è ancora valida 
     public boolean checkAuctionDate(int auction_id){
     
             String query = "Select auction_id from active_auctions where auction_id = ? and end_date > ? ";
@@ -646,7 +668,7 @@ public class DBManager {
             
         return false;
     }
-    
+    //Metodo usato da DBCheker che ritorna tutte le aste terminate
     public ArrayList queryEndedAuctions(Timestamp sell_date){
         
             PreparedStatement stm = null ;
@@ -709,7 +731,7 @@ public class DBManager {
             
             return list;
     }
-    
+    //Metodo usato da DBcheker che cancella tutte le aste terminare dalla tabella delle aste attive
     public int deleteEndedAuctions(Timestamp sell_date){
         
             PreparedStatement stm = null ;
@@ -738,7 +760,7 @@ public class DBManager {
             
         return 0;
     }
- 
+    //Metodo per ottenere un utente dato un id , usato da DBCheker
     public User getUser(int user_id){
         
             PreparedStatement stm = null ;
@@ -781,7 +803,7 @@ public class DBManager {
             
             return tmp;
     }
-    
+    //Usato da DBcheker , salva , in base ai relativi flag , il risultato di un asta 
     public boolean saveEndedAuction(Sale sale){
         
             PreparedStatement auction_stm = null ;
@@ -847,7 +869,7 @@ public class DBManager {
             
             return true;
     } 
-    
+    //Ottiene tutte le offerte per un'asta
     public ArrayList queryOffersLog(int auction_id){
         
             PreparedStatement stm = null ;
@@ -892,8 +914,7 @@ public class DBManager {
             
             return list;
     }
-    // </editor-fold>  
-    
+    //Metodo che ritorna la lista delle vendite attive , usato da myAccount
     public ArrayList queryUserActiveSells(int user_id){
         
             PreparedStatement stm = null ;
@@ -943,7 +964,7 @@ public class DBManager {
             
             return list;
     }
-    
+    //Metodo che ritorna la lista delle aste in cui si è attivi come compratori , usato da myAccount
     public ArrayList queryUserActiveBuys(int user_id){
         
             PreparedStatement stm = null ;
@@ -1005,7 +1026,7 @@ public class DBManager {
             
             return list;
     }
-    
+    //Metodo che ritorna la lista delle aste passate vinte , usato da myAccount
     public ArrayList queryUserWonAuctions(int user_id){
         
             PreparedStatement stm = null ;
@@ -1059,7 +1080,7 @@ public class DBManager {
             
             return list;
     }
-    
+    //Metodo che ritorna la lista delle aste passate perse , usato da myAccount 
     public ArrayList queryUserLostAuctions(int user_id){
         
             PreparedStatement stm = null ;
@@ -1115,9 +1136,8 @@ public class DBManager {
             }
             
             return list;
-    }
-    
-    
+    }   
+    //Metodo che ritorna la lista delle aste terminate in cui l'utente era il venditore , usato da myAccount 
     public ArrayList queryUserEndedAuctions(int user_id){
         
             PreparedStatement stm = null ;
@@ -1192,7 +1212,7 @@ public class DBManager {
             
             return list;
     }
-    
+    //Modifica la descrizione di un asta
     public void modifyDescription(String desc , int id){
             
             String query = "Update active_auctions set description = ? where auction_id = ? ";
@@ -1228,7 +1248,7 @@ public class DBManager {
                  }
             }
      }
-    
+    //Ritorna la coppia dei topUser , usato da Admin
      public Pair queryAdminTopUsers(){
             
           String querySeller = "Select count(*) as auctions , sum(price) as total , username , email "
@@ -1295,7 +1315,7 @@ public class DBManager {
             }        
             return pair;   
      }
-         
+     //Setta il flag "cancellato" a true di un asta attiva , usato da Admin
      public void queryAdminCancelAuction(int id){
             
             String query = "Update active_auctions set cancelled = true where auction_id = ? ";         
@@ -1319,7 +1339,7 @@ public class DBManager {
                  }
             }
      }
-     
+     //Ritorna la lista di tutte le aste finite , con relativo seller e , se presente , buyer
      public ArrayList queryAdminEndedAuctions(){
             
             PreparedStatement stm = null ;
@@ -1411,8 +1431,7 @@ public class DBManager {
             
             return list;
     }
-    
-     
+    //Per un asta ritorna la lista di tutti i compratori attivi su di essa , usato per ottenere la lista dei buyer di una cerca asta da mailManager  
      public ArrayList queryBuyers(Auction auction){
         
             PreparedStatement stm = null ;
@@ -1439,7 +1458,6 @@ public class DBManager {
                     user.setRole(rs.getInt("role"));
                     user.setPhone(rs.getString("phone"));
                     user.setPassword(rs.getString("password"));
-                    user.setId(rs.getInt("user_id"));
                     user.setEmail(rs.getString("email"));
                     user.setCountry(rs.getString("country"));
                     user.setCity(rs.getString("city"));

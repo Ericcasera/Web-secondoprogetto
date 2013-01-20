@@ -3,6 +3,10 @@
     <welcome-file-list>
         <welcome-file>General/GeneralController</welcome-file>
     </welcome-file-list>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/Jsp/ErrorPage.jsp</location>
+    </error-page> 
     <filter>
         <filter-name>AdminFilter</filter-name>
         <filter-class>Filters.AdminFilter</filter-class>

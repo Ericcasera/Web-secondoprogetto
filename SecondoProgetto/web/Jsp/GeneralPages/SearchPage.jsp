@@ -180,7 +180,7 @@
                                                     <tr>
                                                         <td><img height="100px" width="100px" src="<c:url value="/Images"/>/${auction.image_url}"/></td>
                                                         <td>
-                                                            <a href="<c:url value="/General/GeneralController?op=details&id=${auction.auction_id}"/>"> ${auction.name} </a>
+                                                            <a href="<c:url value="/General/GeneralController?op=details&id=${auction.auction_id}"/>"> ${auction.name} </a><br>
                                                             <c:if test="${auction.cancelled}">
                                                                 <span class="label label-important">Asta anullata</span>
                                                             </c:if>

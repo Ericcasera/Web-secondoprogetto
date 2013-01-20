@@ -29,8 +29,8 @@
     </head>
     <body onload="countdown()">
         <center>
-        <h3><c:out value="${requestScope.MSG}" default="Non sei autorizzato ad accedere a questa pagina"/></h3>
-        <h5 >Sarai reindirizzato a breve alla <a href="<c:url value="${requestScope.URL}"/>"><c:out value="${requestScope.Page}"/></a>(<span id="countdown">5</span>)</h5>
+        <h3>La pagina che cerchi non è nei nostri database, siamo spiacenti</h3>
+        <h5 >Sarai reindirizzato a breve alla <a href="<c:url value="/"/>">Homepage</a>(<span id="countdown">5</span>)</h5>
         </center>
     </body>
     </html>

@@ -58,10 +58,11 @@ public class AdminServlet extends HttpServlet {
         }
         
         DBManager.queryAdminCancelAuction(id);
-        Auction auction = DBManager.queryAuctionDetails(id);
-        Email.DelAstaEmail(DBManager.queryBuyers(auction), message, auction);
+        Auction auction = DBManager.queryAuctionDetails(id);       
         
-            response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + id); 
+        response.sendRedirect(request.getContextPath() + "/General/GeneralController?op=details&id=" + id);
+        Email.AuctionCancelMail(DBManager.queryBuyers(auction), message, auction);
+        
         }
         
         else if(op.equals(endedAuctionsPattern))     

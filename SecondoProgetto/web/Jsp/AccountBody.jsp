@@ -14,7 +14,7 @@
                 <li class="nav-header">Ordini terminati</li>
                 <li id="won" ><a href="<c:url value="/User/AccController?op=won"/>">Aste vinte</a></li>
                 <li id="lost" ><a href="<c:url value="/User/AccController?op=lost"/>">Aste perse</a></li>
-                <li id="sold" ><a href="<c:url value="/User/AccController?op=sold"/>">Aste terminate</a></li>
+                <li id="sold" ><a href="<c:url value="/User/AccController?op=sold"/>">Le mie vendite</a></li>
                 </ul>       
             </div>  
             <div class="span10 container-fluid" >
